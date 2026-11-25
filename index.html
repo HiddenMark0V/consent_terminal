@@ -2,10 +2,14 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ZKIMED Terminal" />
+  <meta name="theme-color" content="#ECEEED" />
   <title>ZKIMED | CONSENT OPERATIONS — Clinical Research Terminal</title>
 
-  <!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
+  <!-- Typography: Space Grotesk (Display), Inter (UI), JetBrains Mono (Telemetry) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -25,25 +29,25 @@
             space: {
               bg: '#ECEEED',
               surface: '#FAFBFB',
-              panel: '#F4F6F5',
-              metal: '#DFE3E2',
+              panel: '#F2F4F3',
+              metal: '#DCE0DF',
               border: '#8A9194',
               borderLight: '#B8BFC2',
-              graphite: '#1E2326',
+              graphite: '#1E2424',
               slate: '#525B60',
-              teal: '#5A686B',
-              headerDark: '#475356',
+              teal: '#4E5D60',
+              headerDark: '#3E494C',
             },
             zkimed: {
-              red: '#C8193B',
-              redDark: '#A3122E',
+              red: '#C81E3C',
+              redDark: '#A3152F',
               redLight: '#FDF2F4',
-              green: '#1E7E56',
-              greenLight: '#EDF7F2',
+              green: '#1F8A5B',
+              greenLight: '#ECF7F2',
               amber: '#C97A16',
               amberLight: '#FDF6EC',
-              bluegrey: '#5B7078',
-              bluegreyLight: '#EFF3F5',
+              bluegrey: '#4A6B82',
+              bluegreyLight: '#EEF3F6',
             }
           }
         }
@@ -61,28 +65,29 @@
     :root {
       --bg-primary: #ECEEED;
       --bg-surface: #FAFBFB;
-      --bg-metal: #DFE3E2;
+      --bg-panel: #F2F4F3;
+      --bg-metal: #DCE0DF;
       --border-main: #8A9194;
       --border-subtle: #B8BFC2;
-      --text-primary: #1E2326;
+      --text-primary: #1E2424;
       --text-secondary: #525B60;
-      --text-teal: #5A686B;
-      --accent-red: #C8193B;
-      --accent-green: #1E7E56;
+      --text-teal: #4E5D60;
+      --accent-red: #C81E3C;
+      --accent-green: #1F8A5B;
       --accent-amber: #C97A16;
-      --accent-bluegrey: #5B7078;
+      --accent-bluegrey: #4A6B82;
     }
 
     * {
       box-sizing: border-box;
-      -webkit-tap-highlight-color: rgba(200, 25, 59, 0.12);
+      -webkit-tap-highlight-color: rgba(200, 30, 60, 0.12);
     }
 
     body {
       background-color: var(--bg-primary);
       color: var(--text-primary);
-      font-family: 'Inter', system-ui, sans-serif;
-      /* Starfield technical dot-grid background */
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      /* Subtle Starfield technical dot-grid & structural hairline grid */
       background-image:
         radial-gradient(#B5BCBF 1px, transparent 1px),
         linear-gradient(to right, rgba(138, 145, 148, 0.06) 1px, transparent 1px),
@@ -90,6 +95,8 @@
       background-size: 24px 24px, 96px 96px, 96px 96px;
       background-position: 0 0, 0 0, 0 0;
       min-height: 100vh;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
       overflow-x: hidden;
     }
 
@@ -99,7 +106,7 @@
       background-color: var(--bg-surface);
       border: 1px solid var(--border-main);
       border-radius: 2px;
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85), 0 2px 6px rgba(30, 35, 38, 0.04);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 2px 6px rgba(30, 36, 36, 0.04);
     }
 
     .sf-module-header {
@@ -108,7 +115,7 @@
       gap: 0.65rem;
       padding: 0.55rem 0.9rem;
       border-bottom: 1px solid var(--border-subtle);
-      background: linear-gradient(180deg, #F3F5F4 0%, #E9ECEB 100%);
+      background: linear-gradient(180deg, #F4F6F5 0%, #E7EBEB 100%);
     }
 
     .sf-module-header::before {
@@ -154,16 +161,16 @@
     .starware-bars {
       display: flex;
       gap: 3px;
-      height: 22px;
+      height: 20px;
       align-items: flex-end;
     }
     .starware-bars span {
       display: block;
       width: 4px;
-      background-color: #5A686B;
+      background-color: #4E5D60;
     }
 
-    /* Corner reticle ticks for active / selected items */
+    /* Corner reticle ticks for active navigation / items */
     .sf-reticle {
       position: relative;
     }
@@ -188,7 +195,7 @@
       border-right: 2px solid var(--accent-red);
     }
 
-    /* Tablet-first touch controls */
+    /* Tablet-first touch controls (min 48px touch target) */
     .touch-btn {
       min-height: 48px;
       border-radius: 2px;
@@ -212,10 +219,10 @@
     .touch-input:focus {
       outline: none;
       border-color: var(--accent-red);
-      box-shadow: 0 0 0 2px rgba(200, 25, 59, 0.16);
+      box-shadow: 0 0 0 2px rgba(200, 30, 60, 0.16);
     }
 
-    /* Custom scrollbar for horizontal station strips */
+    /* Horizontal scrollbar suppression for touch station strips */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -224,20 +231,19 @@
       scrollbar-width: none;
     }
 
-    /* Subtle pulse for live telemetry dot */
     @keyframes telemetryPulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      50% { opacity: 0.35; }
     }
     .telemetry-dot {
-      animation: telemetryPulse 2.4s infinite ease-in-out;
+      animation: telemetryPulse 2.2s infinite ease-in-out;
     }
   </style>
 </head>
 <body class="antialiased selection:bg-zkimed-red selection:text-white">
 
   <!-- MAIN APPLICATION SHELL -->
-  <div id="app" class="min-h-screen flex flex-col max-w-[1440px] mx-auto px-2 sm:px-4 md:px-6 pb-8">
+  <div id="app" class="min-h-screen flex flex-col max-w-[1440px] mx-auto px-2.5 sm:px-4 md:px-6 pb-10">
     <!-- Rendered dynamically by JS -->
   </div>
 
@@ -245,13 +251,14 @@
   <div id="modal-root"></div>
 
   <!-- HUD TOAST NOTIFICATION CONTAINER -->
-  <div id="toast-root" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:w-[420px] z-50 pointer-events-none flex flex-col gap-2"></div>
+  <div id="toast-root" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:w-[430px] z-50 pointer-events-none flex flex-col gap-2"></div>
 
   <script>
     /* ==========================================================================
-       1. CONSTANTS, STATUS DEFINITIONS & SEED DATA
+       1. CONSTANTS, STATUS DEFINITIONS & GOOGLE APPS SCRIPT REFERENCE
        ========================================================================== */
-    const STORAGE_KEY = 'zkimed_consent_terminal_v1';
+    const STORAGE_KEY = 'zkimed_terminal_data_v2';
+    const SYNC_CONFIG_KEY = 'zkimed_sync_config_v1';
 
     const VISIT_STATUS = {
       LEER: {
@@ -262,7 +269,7 @@
         bgClass: 'bg-zkimed-bluegreyLight',
         textClass: 'text-zkimed-bluegrey',
         borderClass: 'border-zkimed-bluegrey',
-        dotColor: '#5B7078'
+        dotColor: '#4A6B82'
       },
       BROAD_CONSENT: {
         key: 'BROAD_CONSENT',
@@ -272,7 +279,7 @@
         bgClass: 'bg-zkimed-greenLight',
         textClass: 'text-zkimed-green',
         borderClass: 'border-zkimed-green',
-        dotColor: '#1E7E56'
+        dotColor: '#1F8A5B'
       },
       UNINFORMIERT: {
         key: 'UNINFORMIERT',
@@ -287,12 +294,34 @@
     };
 
     const DEFAULT_QUICK_NOTES = [
-      'Ansprechpartner nicht anwesend.',
       'Postfach heute kontrolliert.',
+      'Ansprechpartner nicht anwesend.',
       'Neue Unterlagen hinterlegt.',
       'Rückkehr am Donnerstag empfohlen.',
       'Zwei Patienten informiert, keine Einwilligung erhalten.'
     ];
+
+    const APPS_SCRIPT_REFERENCE_CODE = `const SECRET_TOKEN = "DEIN_GEHEIMES_PASSWORT";
+
+function doGet(e) {
+  if (!e || !e.parameter || e.parameter.token !== SECRET_TOKEN) {
+    return ContentService.createTextOutput("Unauthorized");
+  }
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  const data = sheet.getRange("A1").getValue() || "{}";
+  return ContentService.createTextOutput(data).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  const payload = JSON.parse(e.postData.contents);
+  if (payload.token !== SECRET_TOKEN) {
+    return ContentService.createTextOutput("Unauthorized");
+  }
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  sheet.getRange("A1").setValue(JSON.stringify(payload.data));
+  sheet.getRange("A2").setValue("Letzter Sync: " + new Date().toLocaleString("de-DE"));
+  return ContentService.createTextOutput(JSON.stringify({ status: "ok" })).setMimeType(ContentService.MimeType.JSON);
+}`;
 
     /* ==========================================================================
        2. DATE & UTILITY HELPERS
@@ -321,6 +350,32 @@
       return `${parts[2]}.${parts[1]}.${parts[0]}`;
     }
 
+    function formatHeaderDateDE() {
+      try {
+        return new Intl.DateTimeFormat('de-DE', {
+          weekday: 'short',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        }).format(new Date());
+      } catch (e) {
+        return formatDateDE(getTodayISO());
+      }
+    }
+
+    function formatTimestampShort(isoString) {
+      if (!isoString) return '—';
+      try {
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return '—';
+        const datePart = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+        const timePart = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+        return `${datePart}, ${timePart} Uhr`;
+      } catch (e) {
+        return '—';
+      }
+    }
+
     function generateId(prefix = 'id') {
       return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 7)}`;
     }
@@ -335,162 +390,116 @@
         .replace(/'/g, '&#39;');
     }
 
-    function createDemoData() {
+    function createInitialSampleData() {
       const today = getTodayISO();
       const yesterday = getOffsetDateISO(-1);
-      const twoDaysAgo = getOffsetDateISO(-2);
-      const fourDaysAgo = getOffsetDateISO(-4);
+      const threeDaysAgo = getOffsetDateISO(-3);
+      const seedTs = new Date(Date.now() - 86400000).toISOString();
 
       const wards = [
         {
-          id: 'ward_12',
+          id: 'ward_demo_12',
           stationNumber: 'Station 12',
-          wardName: 'Kardiologie & Angiologie',
-          location: 'Haus A · Ebene 2 · Nordflügel',
+          stationName: 'Kardiologie & Angiologie',
+          address: 'Haus A · Ebene 2 · Nordflügel',
           mailboxLocation: 'Eingang rechts neben dem Pflegestützpunkt (Fach 12)',
           contactName: 'Dr. med. Katrin Weber',
           contactRole: 'Studienärztin / Oberärztin',
           contactInfo: 'Tel. -4412 · k.weber@zkimed-klinik.de',
           contactNotes: 'Dienstags und donnerstags ab 11:30 Uhr nach der Visite gut erreichbar.',
-          notes: 'Beste Besuchszeit zwischen 11:00 und 13:30 Uhr. Aufklärungsbögen im blauen Ordner am Stützpunkt nachfüllen.'
+          notes: 'Beste Besuchszeit zwischen 11:00 und 13:30 Uhr. Aufklärungsbögen im blauen Ordner nachfüllen.',
+          updatedAt: seedTs
         },
         {
-          id: 'ward_14a',
+          id: 'ward_demo_14a',
           stationNumber: 'Station 14A',
-          wardName: 'Neurologie & Stroke Unit',
-          location: 'Haus A · Ebene 4 · Südflügel',
+          stationName: 'Neurologie & Stroke Unit',
+          address: 'Haus A · Ebene 4 · Südflügel',
           mailboxLocation: 'Raum 4.14 · Ablagefach hinter dem Stationssekretariat',
           contactName: 'Thomas Berger',
           contactRole: 'Stationsleitung Pflege',
           contactInfo: 'Tel. -4820',
           contactNotes: 'Sehr kooperativ, sammelt unterschriebene Bögen direkt im Sekretariat.',
-          notes: 'Zugang zur Stroke Unit nur nach kurzer Anmeldung am Empfang. Hygienevorschriften beachten.'
+          notes: 'Zugang zur Stroke Unit nur nach kurzer Anmeldung am Empfang.',
+          updatedAt: seedTs
         },
         {
-          id: 'ward_21',
+          id: 'ward_demo_21',
           stationNumber: 'Station 21',
-          wardName: 'Onkologie & Hämatologie',
-          location: 'Haus B · Ebene 1 · Osttrakt',
+          stationName: 'Onkologie & Hämatologie',
+          address: 'Haus B · Ebene 1 · Osttrakt',
           mailboxLocation: 'Empfangstresen · Verschlossenes Forschungsfach B1',
           contactName: 'OA Dr. Markus Lindner',
           contactRole: 'Forschungskoordinator Onkologie',
           contactInfo: 'Tel. -5109 · m.lindner@zkimed-klinik.de',
           contactNotes: 'Preferiert kurze Übergabe am frühen Nachmittag.',
-          notes: 'Hohe Teilnahmebereitschaft bei ambulanten und stationären Patienten. Immer 15 Ersatz-Kits mitführen.'
-        },
-        {
-          id: 'ward_04',
-          stationNumber: 'Station 04',
-          wardName: 'Allgemein- & Viszeralchirurgie',
-          location: 'Zentralbau · Erdgeschoss · Sektor C',
-          mailboxLocation: 'Flur C · Wandpostfach gegenüber Arztzimmer 0.08',
-          contactName: 'Sabine Hoffmann',
-          contactRole: 'Case Managerin',
-          contactInfo: 'Tel. -3204',
-          contactNotes: 'Mittwochs ab 14:00 Uhr nicht im Haus.',
-          notes: 'Vormittags oft OP-Vorbereitungen; präoperative Patienten am besten am Nachmittag besuchen.'
-        },
-        {
-          id: 'ward_18',
-          stationNumber: 'Station 18',
-          wardName: 'Pneumologie & Beatmungsmedizin',
-          location: 'Haus B · Ebene 3 · Westflügel',
-          mailboxLocation: 'Stationszimmer 3.22 · Hängeregister "Studien"',
-          contactName: 'Dr. med. Lukas Reimann',
-          contactRole: 'Assistenzarzt',
-          contactInfo: 'Tel. -5318',
-          contactNotes: 'Bittet um kurze Info per Telefon vor Eintreffen.',
-          notes: 'Isolationszimmer am Flurende beachten. Schutzkleidung liegt vor Zimmer 3.28 bereit.'
-        },
-        {
-          id: 'ward_07',
-          stationNumber: 'Station 07',
-          wardName: 'Nephrologie & Dialyse',
-          location: 'Haus C · Ebene 1 · Süd',
-          mailboxLocation: 'Anmeldung Dialyse · Ablagekorb rot',
-          contactName: 'Miriam Scholz',
-          contactRole: 'Leitende Dialyse-Fachkraft',
-          contactInfo: 'Tel. -6107',
-          contactNotes: 'Vormittagsschicht bis 13:00 Uhr.',
-          notes: 'Patienten während der Dialyse ruhig ansprechbar, ausreichend Zeit für Fragen einplanen.'
+          notes: 'Hohe Teilnahmebereitschaft. Immer 15 Ersatz-Kits mitführen.',
+          updatedAt: seedTs
         }
       ];
 
       const visits = [
         {
-          id: 'vis_01',
-          wardId: 'ward_12',
-          date: fourDaysAgo,
+          id: 'vis_demo_01',
+          wardId: 'ward_demo_12',
+          date: threeDaysAgo,
           status: 'BROAD_CONSENT',
           consentCount: 3,
-          note: 'Ansprechpartner anwesend, 3 unterschriebene Einwilligungen aus Postfach entnommen.',
-          createdAt: Date.now() - 345600000
+          note: 'Ansprechpartner anwesend, 3 unterschriebene Einwilligungen entnommen.',
+          createdAt: Date.now() - 259200000,
+          updatedAt: seedTs
         },
         {
-          id: 'vis_02',
-          wardId: 'ward_12',
+          id: 'vis_demo_02',
+          wardId: 'ward_demo_12',
           date: today,
           status: 'BROAD_CONSENT',
           consentCount: 4,
           note: 'Postfach heute kontrolliert. Neue Unterlagen hinterlegt.',
-          createdAt: Date.now() - 7200000
+          createdAt: Date.now() - 3600000,
+          updatedAt: seedTs
         },
         {
-          id: 'vis_03',
-          wardId: 'ward_14a',
-          date: twoDaysAgo,
+          id: 'vis_demo_03',
+          wardId: 'ward_demo_14a',
+          date: yesterday,
           status: 'UNINFORMIERT',
           consentCount: 0,
           note: 'Zwei Patienten informiert, keine Einwilligung erhalten.',
-          createdAt: Date.now() - 172800000
-        },
-        {
-          id: 'vis_04',
-          wardId: 'ward_14a',
-          date: today,
-          status: 'BROAD_CONSENT',
-          consentCount: 2,
-          note: 'Rücksprache mit Thomas Berger erfolgreich.',
-          createdAt: Date.now() - 5400000
-        },
-        {
-          id: 'vis_05',
-          wardId: 'ward_21',
-          date: yesterday,
-          status: 'BROAD_CONSENT',
-          consentCount: 5,
-          note: 'Sehr guter Rücklauf auf Station 21, neue Aufklärungsbögen hinterlegt.',
-          createdAt: Date.now() - 86400000
-        },
-        {
-          id: 'vis_06',
-          wardId: 'ward_04',
-          date: yesterday,
-          status: 'LEER',
-          consentCount: 0,
-          note: 'Postfach heute kontrolliert. Ansprechpartner nicht anwesend.',
-          createdAt: Date.now() - 82800000
+          createdAt: Date.now() - 86400000,
+          updatedAt: seedTs
         }
-        // Station 18 and Station 07 intentionally have 0 visits so "NOCH NICHT BESUCHT" is demonstrable right away
+        // Station 21 intentionally has 0 visits so "Noch nicht besucht" is visible immediately
       ];
 
       return {
         wards,
         visits,
-        settings: {
-          surveyTitle: 'BROAD CONSENT SURVEY · LUNAR-MED',
-          facilityName: 'ZKIMED FORSCHUNGSKLINIKUM',
-          quickNotes: [...DEFAULT_QUICK_NOTES]
-        }
+        deletedIds: [],
+        updatedAt: seedTs,
+        isDemoSeed: true
       };
     }
 
     /* ==========================================================================
-       3. APPLICATION STATE & OFFLINE-FIRST STORAGE ENGINE
+       3. APPLICATION STATE & LOCAL PERSISTENCE ENGINE
        ========================================================================== */
     const state = {
       wards: [],
       visits: [],
+      deletedIds: [],
+      updatedAt: null,
+      isDemoSeed: false,
+      pendingPush: false,
+      syncConfig: {
+        webAppUrl: '',
+        secretToken: '',
+        lastSyncedAt: null
+      },
+      syncRuntime: {
+        status: 'UNCONFIGURED', // UNCONFIGURED | SYNCING | SYNCED | OFFLINE | ERROR
+        errorMessage: ''
+      },
       settings: {
         surveyTitle: 'BROAD CONSENT SURVEY · LUNAR-MED',
         facilityName: 'ZKIMED FORSCHUNGSKLINIKUM',
@@ -500,12 +509,12 @@
         activeTab: 'MISSION_CONTROL', // MISSION_CONTROL | STATIONS | WARD_DETAIL | WALK_MODE | RUNDGAENGE | EXPORT | SETTINGS
         selectedWardId: null,
         wardDetailTab: 'OVERVIEW', // OVERVIEW | HISTORY | QUICK_ENTRY
-        // Quick Entry draft state
+        // Quick Entry draft
         qeDate: getTodayISO(),
         qeStatus: 'BROAD_CONSENT',
         qeCount: 1,
         qeNote: '',
-        // Walk Mode state
+        // Walk Mode draft
         walkWardId: null,
         walkDate: getTodayISO(),
         walkStatus: 'BROAD_CONSENT',
@@ -523,25 +532,64 @@
         logSearch: '',
         // Export state
         exportDate: getTodayISO(),
-        // Save indicator timestamp
-        lastSavedTime: null
+        // UI toggles
+        lastSavedClock: null,
+        showSyncToken: false
       }
     };
 
-    function loadState() {
+    function isSyncConfigured() {
+      return Boolean(state.syncConfig.webAppUrl && state.syncConfig.secretToken);
+    }
+
+    function loadSyncConfig() {
+      try {
+        const raw = localStorage.getItem(SYNC_CONFIG_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        state.syncConfig = {
+          webAppUrl: (parsed.webAppUrl || '').trim(),
+          secretToken: (parsed.secretToken || '').trim(),
+          lastSyncedAt: parsed.lastSyncedAt || null
+        };
+        if (isSyncConfigured()) {
+          state.syncRuntime.status = navigator.onLine ? 'SYNCING' : 'OFFLINE';
+        }
+      } catch (err) {
+        console.error('Fehler beim Laden der Sync-Konfiguration:', err);
+      }
+    }
+
+    function saveSyncConfig() {
+      try {
+        localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(state.syncConfig));
+      } catch (err) {
+        console.error('Fehler beim Speichern der Sync-Konfiguration:', err);
+      }
+    }
+
+    function loadTerminalData() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) {
-          const demo = createDemoData();
-          state.wards = demo.wards;
-          state.visits = demo.visits;
-          state.settings = demo.settings;
-          saveState(false);
+          const sample = createInitialSampleData();
+          state.wards = sample.wards;
+          state.visits = sample.visits;
+          state.deletedIds = [];
+          state.updatedAt = sample.updatedAt;
+          state.isDemoSeed = true;
+          state.pendingPush = false;
+          persistTerminalData({ markModified: false, triggerSync: false });
           return;
         }
         const parsed = JSON.parse(raw);
         state.wards = Array.isArray(parsed.wards) ? parsed.wards : [];
         state.visits = Array.isArray(parsed.visits) ? parsed.visits : [];
+        state.deletedIds = Array.isArray(parsed.deletedIds) ? parsed.deletedIds : [];
+        state.updatedAt = parsed.updatedAt || new Date().toISOString();
+        state.isDemoSeed = Boolean(parsed.isDemoSeed);
+        state.pendingPush = Boolean(parsed.pendingPush);
+
         if (parsed.settings) {
           state.settings = {
             surveyTitle: parsed.settings.surveyTitle || 'BROAD CONSENT SURVEY · LUNAR-MED',
@@ -553,41 +601,338 @@
         }
       } catch (err) {
         console.error('Fehler beim Laden aus localStorage:', err);
-        const demo = createDemoData();
-        state.wards = demo.wards;
-        state.visits = demo.visits;
-        state.settings = demo.settings;
+        const sample = createInitialSampleData();
+        state.wards = sample.wards;
+        state.visits = sample.visits;
+        state.deletedIds = [];
+        state.updatedAt = sample.updatedAt;
+        state.isDemoSeed = true;
       }
     }
 
-    function saveState(updateBadge = true) {
+    function persistTerminalData({ markModified = true, triggerSync = true } = {}) {
       try {
+        if (markModified) {
+          state.updatedAt = new Date().toISOString();
+          state.isDemoSeed = false;
+          state.pendingPush = true;
+        }
+        // Keep deletedIds bounded to last 500 entries
+        if (state.deletedIds.length > 500) {
+          state.deletedIds = state.deletedIds.slice(-500);
+        }
+
         const payload = {
-          version: 1,
-          updatedAt: new Date().toISOString(),
+          version: 2,
           wards: state.wards,
           visits: state.visits,
+          deletedIds: state.deletedIds,
+          updatedAt: state.updatedAt,
+          isDemoSeed: state.isDemoSeed,
+          pendingPush: state.pendingPush,
           settings: state.settings
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+
         const now = new Date();
-        state.ui.lastSavedTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-        if (updateBadge) {
-          const badgeEl = document.getElementById('hud-save-indicator');
-          if (badgeEl) {
-            badgeEl.textContent = `GESPEICHERT · ${state.ui.lastSavedTime}`;
-            badgeEl.classList.add('text-zkimed-green');
-            setTimeout(() => badgeEl.classList.remove('text-zkimed-green'), 1400);
-          }
+        state.ui.lastSavedClock = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+        if (triggerSync && isSyncConfigured()) {
+          scheduleAutoPush();
         }
       } catch (err) {
-        console.error('Fehler beim Speichern:', err);
-        showToast('Speicherfehler im Browser-Speicher!', 'error');
+        console.error('Fehler beim lokalen Speichern:', err);
+        showToast('Speicherfehler im lokalen Gerätespeicher!', 'error');
       }
     }
 
     /* ==========================================================================
-       4. COMPUTED METRICS & SELECTORS
+       4. AUTOMATIC OFFLINE-FIRST GOOGLE SHEETS SYNCHRONIZATION ENGINE
+       ========================================================================== */
+    let autoPushTimer = null;
+    let syncInProgress = false;
+    let queuedAutoPush = false;
+    let lastFocusSyncTimestamp = 0;
+
+    function updateSyncStatusUI() {
+      const headerPillSlot = document.getElementById('hud-sync-pill-slot');
+      if (headerPillSlot) {
+        headerPillSlot.innerHTML = renderHeaderSyncPill();
+        bindHeaderSyncPillEvent();
+      }
+      if (state.ui.activeTab === 'SETTINGS') {
+        const settingsStatusSlot = document.getElementById('settings-sync-status-panel');
+        if (settingsStatusSlot) {
+          settingsStatusSlot.innerHTML = renderSettingsSyncStatusHTML();
+        }
+      }
+    }
+
+    function setSyncRuntimeStatus(status, errorMessage = '') {
+      state.syncRuntime.status = status;
+      state.syncRuntime.errorMessage = errorMessage;
+      if (status === 'SYNCED') {
+        state.syncConfig.lastSyncedAt = new Date().toISOString();
+        saveSyncConfig();
+      }
+      updateSyncStatusUI();
+    }
+
+    function scheduleAutoPush() {
+      if (!isSyncConfigured()) return;
+      if (!navigator.onLine) {
+        setSyncRuntimeStatus('OFFLINE');
+        return;
+      }
+      clearTimeout(autoPushTimer);
+      autoPushTimer = setTimeout(() => {
+        runCloudSync({ mode: 'AUTO_PUSH', showToastFeedback: false });
+      }, 1500);
+    }
+
+    /**
+     * Merges local and remote arrays by `id`, honoring `deletedIds` tombstones
+     * and keeping the record with the newer `updatedAt` ISO timestamp.
+     */
+    function mergeRecordCollections(localList, remoteList, deletedSet) {
+      const mergedMap = new Map();
+
+      (Array.isArray(localList) ? localList : []).forEach(item => {
+        if (!item || !item.id || deletedSet.has(item.id)) return;
+        mergedMap.set(item.id, item);
+      });
+
+      (Array.isArray(remoteList) ? remoteList : []).forEach(remoteItem => {
+        if (!remoteItem || !remoteItem.id || deletedSet.has(remoteItem.id)) return;
+        const localItem = mergedMap.get(remoteItem.id);
+        if (!localItem) {
+          mergedMap.set(remoteItem.id, remoteItem);
+        } else {
+          const localTs = localItem.updatedAt ? (Date.parse(localItem.updatedAt) || 0) : 0;
+          const remoteTs = remoteItem.updatedAt ? (Date.parse(remoteItem.updatedAt) || 0) : 0;
+          if (remoteTs > localTs) {
+            mergedMap.set(remoteItem.id, remoteItem);
+          }
+        }
+      });
+
+      return Array.from(mergedMap.values());
+    }
+
+    async function fetchRemotePayload(webAppUrl, secretToken) {
+      const sep = webAppUrl.includes('?') ? '&' : '?';
+      const requestUrl = `${webAppUrl}${sep}token=${encodeURIComponent(secretToken)}&t=${Date.now()}`;
+      const response = await fetch(requestUrl, {
+        method: 'GET',
+        cache: 'no-store'
+      });
+
+      const rawText = await response.text();
+      if (rawText.trim() === 'Unauthorized') {
+        throw new Error('Unauthorized: Das Sicherheitspasswort (SECRET_TOKEN) stimmt nicht mit dem Google Apps Script überein.');
+      }
+      if (rawText.trim().startsWith('<')) {
+        throw new Error('Google-Zugriffsfehler: Bitte stellen Sie im Apps Script unter "Bereitstellen" sicher, dass "Zugriff: Jeder" ausgewählt ist.');
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(rawText);
+      } catch (e) {
+        throw new Error('Ungültige Server-Antwort von Google Apps Script (kein gültiges JSON).');
+      }
+
+      if (parsed && parsed.error === 'Unauthorized') {
+        throw new Error('Unauthorized: Das Sicherheitspasswort (SECRET_TOKEN) ist ungültig.');
+      }
+
+      return parsed || {};
+    }
+
+    async function pushPayloadToRemote(webAppUrl, secretToken) {
+      const payload = {
+        token: secretToken,
+        data: {
+          wards: state.wards,
+          visits: state.visits,
+          deletedIds: state.deletedIds,
+          updatedAt: state.updatedAt || new Date().toISOString()
+        }
+      };
+
+      const response = await fetch(webAppUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const rawText = await response.text();
+      if (rawText.trim() === 'Unauthorized') {
+        throw new Error('Unauthorized: Das Sicherheitspasswort (SECRET_TOKEN) stimmt nicht mit dem Google Apps Script überein.');
+      }
+      if (rawText.trim().startsWith('<')) {
+        throw new Error('Google-Zugriffsfehler: Bitte prüfen Sie die Bereitstellungs-Einstellungen im Google Apps Script.');
+      }
+
+      let parsed = {};
+      try {
+        parsed = JSON.parse(rawText);
+      } catch (e) {
+        if (!response.ok) {
+          throw new Error(`HTTP-Fehler ${response.status} beim Übertragen an Google Sheets.`);
+        }
+      }
+
+      if (parsed && parsed.error === 'Unauthorized') {
+        throw new Error('Unauthorized: Das Sicherheitspasswort (SECRET_TOKEN) ist ungültig.');
+      }
+
+      state.pendingPush = false;
+      state.isDemoSeed = false;
+      persistTerminalData({ markModified: false, triggerSync: false });
+    }
+
+    async function runCloudSync({ mode = 'BIDIRECTIONAL', showToastFeedback = false } = {}) {
+      if (!isSyncConfigured()) {
+        setSyncRuntimeStatus('UNCONFIGURED');
+        return;
+      }
+
+      if (!navigator.onLine) {
+        setSyncRuntimeStatus('OFFLINE');
+        if (showToastFeedback) {
+          showToast('Gerät ist offline. Daten sind lokal gespeichert und werden bei WLAN-Verbindung synchronisiert.', 'info');
+        }
+        return;
+      }
+
+      if (syncInProgress) {
+        if (mode === 'AUTO_PUSH' || mode === 'FORCE_PUSH') {
+          queuedAutoPush = true;
+        }
+        return;
+      }
+
+      syncInProgress = true;
+      setSyncRuntimeStatus('SYNCING');
+
+      const { webAppUrl, secretToken } = state.syncConfig;
+
+      try {
+        if (mode === 'FORCE_PUSH') {
+          await pushPayloadToRemote(webAppUrl, secretToken);
+          setSyncRuntimeStatus('SYNCED');
+          if (showToastFeedback) {
+            showToast('Lokaler Datenbestand wurde erfolgreich in Google Sheets geschrieben.', 'success');
+          }
+          return;
+        }
+
+        // Pull remote first to check state & merge cleanly
+        const remote = await fetchRemotePayload(webAppUrl, secretToken);
+        const remoteHasStructure = Array.isArray(remote.wards) || Array.isArray(remote.visits);
+
+        if (!remoteHasStructure) {
+          // Remote Google Sheet cell A1 is empty ("{}") -> seed cloud with local data
+          await pushPayloadToRemote(webAppUrl, secretToken);
+          setSyncRuntimeStatus('SYNCED');
+          if (showToastFeedback) {
+            showToast('Verbunden! Lokale Daten wurden initial in Google Sheets gespeichert.', 'success');
+          }
+          return;
+        }
+
+        if (state.isDemoSeed && !state.pendingPush) {
+          // Local device only had untouched initial sample data -> replace cleanly with real remote data
+          state.wards = Array.isArray(remote.wards) ? remote.wards : [];
+          state.visits = Array.isArray(remote.visits) ? remote.visits : [];
+          state.deletedIds = Array.isArray(remote.deletedIds) ? remote.deletedIds : [];
+          state.updatedAt = remote.updatedAt || new Date().toISOString();
+          state.isDemoSeed = false;
+          state.pendingPush = false;
+          persistTerminalData({ markModified: false, triggerSync: false });
+          setSyncRuntimeStatus('SYNCED');
+          renderApp();
+          if (showToastFeedback) {
+            showToast('Datenbestand erfolgreich aus Google Sheets geladen.', 'success');
+          }
+          return;
+        }
+
+        // Merge local and remote collections using tombstones + record-level updatedAt
+        const combinedDeleted = new Set([
+          ...(Array.isArray(state.deletedIds) ? state.deletedIds : []),
+          ...(Array.isArray(remote.deletedIds) ? remote.deletedIds : [])
+        ]);
+
+        const mergedWards = mergeRecordCollections(state.wards, remote.wards, combinedDeleted);
+        const mergedVisits = mergeRecordCollections(state.visits, remote.visits, combinedDeleted);
+        const mergedDeletedIds = Array.from(combinedDeleted).slice(-500);
+
+        const localSignature = JSON.stringify({
+          w: state.wards,
+          v: state.visits,
+          d: state.deletedIds
+        });
+        const mergedSignature = JSON.stringify({
+          w: mergedWards,
+          v: mergedVisits,
+          d: mergedDeletedIds
+        });
+        const remoteSignature = JSON.stringify({
+          w: Array.isArray(remote.wards) ? remote.wards : [],
+          v: Array.isArray(remote.visits) ? remote.visits : [],
+          d: Array.isArray(remote.deletedIds) ? remote.deletedIds : []
+        });
+
+        const localChanged = localSignature !== mergedSignature;
+        const remoteNeedsUpdate = remoteSignature !== mergedSignature || state.pendingPush;
+
+        if (localChanged) {
+          state.wards = mergedWards;
+          state.visits = mergedVisits;
+          state.deletedIds = mergedDeletedIds;
+          state.updatedAt = new Date().toISOString();
+          state.isDemoSeed = false;
+          persistTerminalData({ markModified: false, triggerSync: false });
+          renderApp();
+        }
+
+        if (remoteNeedsUpdate) {
+          await pushPayloadToRemote(webAppUrl, secretToken);
+        } else {
+          state.pendingPush = false;
+          persistTerminalData({ markModified: false, triggerSync: false });
+        }
+
+        setSyncRuntimeStatus('SYNCED');
+        if (showToastFeedback) {
+          showToast('Synchronisation mit Google Sheets abgeschlossen.', 'success');
+        }
+      } catch (err) {
+        console.error('Google Sheets Sync Fehler:', err);
+        if (!navigator.onLine) {
+          setSyncRuntimeStatus('OFFLINE');
+        } else {
+          const msg = err && err.message ? err.message : 'Verbindung zu Google Sheets fehlgeschlagen.';
+          setSyncRuntimeStatus('ERROR', msg);
+          if (showToastFeedback) {
+            showToast(msg, 'error');
+          }
+        }
+      } finally {
+        syncInProgress = false;
+        if (queuedAutoPush) {
+          queuedAutoPush = false;
+          runCloudSync({ mode: 'AUTO_PUSH', showToastFeedback: false });
+        }
+      }
+    }
+
+    /* ==========================================================================
+       5. COMPUTED METRICS & SELECTORS
        ========================================================================== */
     function getSortedWardsList() {
       return [...state.wards].sort((a, b) =>
@@ -607,7 +952,10 @@
     function getWardStats(wardId) {
       const wVisits = getWardVisits(wardId);
       const today = getTodayISO();
-      const totalConsents = wVisits.reduce((sum, v) => sum + (v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0), 0);
+      const totalConsents = wVisits.reduce(
+        (sum, v) => sum + (v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0),
+        0
+      );
       const latestVisit = wVisits.length > 0 ? wVisits[0] : null;
       const visitedToday = wVisits.some(v => v.date === today);
       return {
@@ -621,15 +969,15 @@
     function getGlobalStats() {
       const today = getTodayISO();
       const totalWards = state.wards.length;
-      const visitedTodayWardIds = new Set(
-        state.visits.filter(v => v.date === today).map(v => v.wardId)
-      );
-      // Only count wards that still exist
       const existingWardIds = new Set(state.wards.map(w => w.id));
-      const visitedTodayCount = [...visitedTodayWardIds].filter(id => existingWardIds.has(id)).length;
+
+      const visitedTodayWardIds = new Set(
+        state.visits.filter(v => v.date === today && existingWardIds.has(v.wardId)).map(v => v.wardId)
+      );
+      const visitedTodayCount = visitedTodayWardIds.size;
 
       const everVisitedWardIds = new Set(
-        state.visits.map(v => v.wardId).filter(id => existingWardIds.has(id))
+        state.visits.filter(v => existingWardIds.has(v.wardId)).map(v => v.wardId)
       );
       const unvisitedWardsCount = Math.max(0, totalWards - everVisitedWardIds.size);
 
@@ -661,27 +1009,23 @@
     }
 
     /* ==========================================================================
-       5. ZKIMED EMBLEM SVG & GEOMETRIC ICONS
+       6. CUSTOM INLINE SVG ZKIMED EMBLEM & GEOMETRIC ICONS
        ========================================================================== */
     function renderZkimedLogoSVG(sizeClass = 'w-14 h-14') {
       return `
         <svg viewBox="0 0 220 225" class="${sizeClass} shrink-0 select-none" aria-label="ZKIMED Emblem">
           <defs>
-            <!-- Left half clip for anatomical brain -->
             <clipPath id="zkimed-left-hemisphere">
               <rect x="0" y="0" width="109" height="190" />
             </clipPath>
-            <!-- Right half clip for lunar hemisphere -->
             <clipPath id="zkimed-right-hemisphere">
               <rect x="111" y="0" width="109" height="190" />
             </clipPath>
-            <!-- Gold metallic gradient for Caduceus -->
             <linearGradient id="zkimed-gold" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#F2D675" />
               <stop offset="45%" stop-color="#D4AF37" />
               <stop offset="100%" stop-color="#A67C1E" />
             </linearGradient>
-            <!-- Curved text path along bottom -->
             <path id="zkimed-text-arc" d="M 34,166 A 84,84 0 0,0 186,166" />
           </defs>
 
@@ -695,8 +1039,7 @@
                      C 43,66 38,84 40,104
                      C 41,122 50,139 64,151
                      C 77,162 93,168 108,168 Z"
-                  fill="#D91B42" />
-            <!-- Anatomical brain sulci & gyri folds -->
+                  fill="#C81E3C" />
             <g fill="none" stroke="#4D5256" stroke-width="2.6" stroke-linecap="round">
               <path d="M 106,36 C 90,35 79,43 76,53" />
               <path d="M 96,49 C 80,48 67,56 62,69" />
@@ -714,7 +1057,6 @@
           <!-- RIGHT HEMISPHERE: Pearl-Silver Lunar Surface -->
           <g clip-path="url(#zkimed-right-hemisphere)">
             <circle cx="110" cy="95" r="73" fill="#E8E9EB" stroke="#B8BCBF" stroke-width="1" />
-            <!-- Lunar Maria & Craters -->
             <path d="M 118,34 C 134,36 146,47 144,61 C 142,73 128,77 119,70 Z" fill="#C4C8CC" opacity="0.7" />
             <path d="M 148,54 C 163,58 173,74 169,92 C 165,107 151,111 142,99 C 136,90 139,65 148,54 Z" fill="#B8BDC2" opacity="0.75" />
             <path d="M 122,92 C 136,91 146,104 142,119 C 138,132 124,135 117,124 Z" fill="#C7CBCE" opacity="0.65" />
@@ -727,17 +1069,12 @@
 
           <!-- CENTRAL CADUCEUS STAFF (Metallic Gold) -->
           <g stroke="#474B4E" stroke-width="1.3" stroke-linejoin="round">
-            <!-- Central vertical rod -->
             <path d="M 108,43 L 112,43 L 111.3,194 L 110,204 L 108.7,194 Z" fill="url(#zkimed-gold)" />
-            <!-- Top sphere finial -->
             <circle cx="110" cy="37" r="6.5" fill="url(#zkimed-gold)" />
-            <!-- Left Wing -->
             <path d="M 105,49 C 89,40 67,41 51,48 C 60,55 72,58 84,58 C 72,61 63,62 58,62 C 72,68 89,67 105,60 Z"
                   fill="url(#zkimed-gold)" />
-            <!-- Right Wing -->
             <path d="M 115,49 C 131,40 153,41 169,48 C 160,55 148,58 136,58 C 148,61 157,62 162,62 C 148,68 131,67 115,60 Z"
                   fill="url(#zkimed-gold)" />
-            <!-- Intertwined Serpents -->
             <path d="M 103,63 C 92,66 90,77 101,83 C 115,90 126,97 123,108 C 120,117 102,121 97,130 C 93,137 101,145 113,150 C 120,153 121,160 113,164"
                   fill="none" stroke="url(#zkimed-gold)" stroke-width="4.4" stroke-linecap="round" />
             <path d="M 117,63 C 128,66 130,77 119,83 C 105,90 94,97 97,108 C 100,117 118,121 123,130 C 127,137 119,145 107,150 C 100,153 99,160 107,164"
@@ -745,7 +1082,7 @@
           </g>
 
           <!-- CURVED ZKIMED BRAND LETTERING -->
-          <text fill="#C8193B" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="25" letter-spacing="5.5">
+          <text fill="#C81E3C" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="25" letter-spacing="5.5">
             <textPath href="#zkimed-text-arc" startOffset="50%" text-anchor="middle">ZKIMED</textPath>
           </text>
         </svg>
@@ -755,10 +1092,10 @@
     const ICONS = {
       radar: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>`,
       wards: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M9 9v11"/></svg>`,
+      walk: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
       history: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>`,
       export: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg>`,
       settings: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
-      walk: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
       mailbox: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`,
       plus: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
       check: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
@@ -766,11 +1103,12 @@
       trash: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
       search: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
       user: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-      pin: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`
+      pin: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+      cloud: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`
     };
 
     /* ==========================================================================
-       6. TOAST & CUSTOM MODAL DIALOGS (NO NATIVE ALERT / CONFIRM)
+       7. TOAST NOTIFICATIONS & CUSTOM MODALS (NO NATIVE ALERT / CONFIRM)
        ========================================================================== */
     let toastCounter = 0;
 
@@ -797,7 +1135,7 @@
         <div class="w-1.5 ${barMap[type] || barMap.info} shrink-0"></div>
         <div class="p-3.5 flex-1 flex items-center justify-between gap-3">
           <div class="text-sm font-medium text-space-graphite">${escapeHTML(message)}</div>
-          ${undoCallback ? `<button id="${id}_undo" class="px-3 py-1.5 bg-space-graphite text-white font-display text-xs font-bold uppercase tracking-wider rounded-[2px] hover:bg-zkimed-red shrink-0">Rückgängig</button>` : ''}
+          ${undoCallback ? `<button type="button" id="${id}_undo" class="px-3 py-1.5 bg-space-graphite text-white font-display text-xs font-bold uppercase tracking-wider rounded-[2px] hover:bg-zkimed-red shrink-0">Rückgängig</button>` : ''}
         </div>
       `;
 
@@ -818,7 +1156,7 @@
           el.style.opacity = '0';
           setTimeout(() => el.remove(), 200);
         }
-      }, undoCallback ? 6000 : 3200);
+      }, undoCallback ? 6500 : 3400);
     }
 
     function closeModal() {
@@ -881,16 +1219,16 @@
                   <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
                     Stationsname / Fachbereich
                   </label>
-                  <input type="text" name="wardName" placeholder="z.B. Innere Medizin II" class="touch-input w-full" />
+                  <input type="text" name="stationName" placeholder="z.B. Innere Medizin II" class="touch-input w-full" />
                 </div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
-                    Standort / Adresse im Klinikum *
+                    Adresse / Standort im Klinikum *
                   </label>
-                  <input type="text" name="location" required placeholder="z.B. Haus A · Ebene 3 · Ostflügel" class="touch-input w-full" />
+                  <input type="text" name="address" required placeholder="z.B. Haus A · Ebene 3 · Ostflügel" class="touch-input w-full" />
                 </div>
                 <div>
                   <label class="block font-display text-xs font-bold uppercase tracking-wider text-zkimed-red mb-1.5">
@@ -901,7 +1239,7 @@
               </div>
 
               <div class="border-t border-space-borderLight pt-4">
-                <div class="font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-3">Ansprechpartner & Kontakt</div>
+                <div class="font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-3">Ansprechpartner &amp; Kontakt</div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label class="block text-xs font-semibold text-space-slate mb-1">Name Ansprechpartner</label>
@@ -952,18 +1290,17 @@
         e.preventDefault();
         const fd = new FormData(e.target);
         const stationNumber = fd.get('stationNumber').trim();
-        const wardName = fd.get('wardName').trim();
-        const location = fd.get('location').trim();
+        const stationName = fd.get('stationName').trim();
+        const address = fd.get('address').trim();
         const mailboxLocation = fd.get('mailboxLocation').trim();
 
         const errorBox = document.getElementById('add-ward-error');
-        if (!stationNumber || !location || !mailboxLocation) {
-          errorBox.textContent = 'Bitte Stationsnummer, Standort und Postfach-Ort ausfüllen.';
+        if (!stationNumber || !address || !mailboxLocation) {
+          errorBox.textContent = 'Bitte Stationsnummer, Adresse/Standort und Postfach-Ort ausfüllen.';
           errorBox.classList.remove('hidden');
           return;
         }
 
-        // Duplicate prevention check
         const duplicate = state.wards.some(
           w => w.stationNumber.trim().toLowerCase() === stationNumber.toLowerCase()
         );
@@ -973,21 +1310,23 @@
           return;
         }
 
+        const nowIso = new Date().toISOString();
         const newWard = {
           id: generateId('ward'),
           stationNumber,
-          wardName,
-          location,
+          stationName,
+          address,
           mailboxLocation,
           contactName: fd.get('contactName').trim(),
           contactRole: fd.get('contactRole').trim(),
           contactInfo: fd.get('contactInfo').trim(),
           contactNotes: fd.get('contactNotes').trim(),
-          notes: fd.get('notes').trim()
+          notes: fd.get('notes').trim(),
+          updatedAt: nowIso
         };
 
         state.wards.push(newWard);
-        saveState();
+        persistTerminalData({ markModified: true, triggerSync: true });
         closeModal();
         showToast(`${stationNumber} erfolgreich registriert.`, 'success');
         openWardDetail(newWard.id, 'OVERVIEW');
@@ -1018,7 +1357,7 @@
 
               <div>
                 <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-2">Consent Status</label>
-                <div class="grid grid-cols-1 gap-2.5" id="ev-status-group">
+                <div class="grid grid-cols-1 gap-2.5">
                   ${Object.values(VISIT_STATUS).map(st => `
                     <button type="button" data-status="${st.key}" class="ev-status-btn touch-btn px-4 py-3 border text-left font-semibold flex items-center justify-between ${editStatus === st.key ? 'border-space-graphite bg-space-graphite text-white' : 'border-space-border bg-white text-space-graphite hover:bg-space-panel'}">
                       <span>${escapeHTML(st.label)}</span>
@@ -1102,8 +1441,9 @@
         visit.status = editStatus;
         visit.consentCount = editStatus === 'BROAD_CONSENT' ? Math.max(0, rawCount) : 0;
         visit.note = newNote;
+        visit.updatedAt = new Date().toISOString();
 
-        saveState();
+        persistTerminalData({ markModified: true, triggerSync: true });
         closeModal();
         showToast('Rundgang-Eintrag aktualisiert.', 'success');
         renderApp();
@@ -1111,10 +1451,12 @@
     }
 
     /* ==========================================================================
-       7. CORE CRUD ACTIONS (WARDS & VISITS)
+       8. CORE CRUD ACTIONS (WARDS & VISITS)
        ========================================================================== */
     function addVisitRecord({ wardId, date, status, consentCount, note }) {
       const normalizedCount = status === 'BROAD_CONSENT' ? Math.max(0, parseInt(consentCount, 10) || 0) : 0;
+      const now = Date.now();
+      const nowIso = new Date(now).toISOString();
       const newVisit = {
         id: generateId('vis'),
         wardId,
@@ -1122,10 +1464,11 @@
         status,
         consentCount: normalizedCount,
         note: (note || '').trim(),
-        createdAt: Date.now()
+        createdAt: now,
+        updatedAt: nowIso
       };
       state.visits.push(newVisit);
-      saveState();
+      persistTerminalData({ markModified: true, triggerSync: true });
       return newVisit;
     }
 
@@ -1142,14 +1485,19 @@
         danger: true,
         onConfirm: () => {
           state.visits = state.visits.filter(v => v.id !== visitId);
-          saveState();
+          if (!state.deletedIds.includes(visitId)) {
+            state.deletedIds.push(visitId);
+          }
+          persistTerminalData({ markModified: true, triggerSync: true });
           renderApp();
           showToast(
             `Rundgang vom ${formatDateDE(deletedCopy.date)} gelöscht.`,
             'info',
             () => {
+              deletedCopy.updatedAt = new Date().toISOString();
               state.visits.push(deletedCopy);
-              saveState();
+              state.deletedIds = state.deletedIds.filter(id => id !== visitId);
+              persistTerminalData({ markModified: true, triggerSync: true });
               renderApp();
               showToast('Eintrag wiederhergestellt.', 'success');
             }
@@ -1161,17 +1509,21 @@
     function deleteWardWithConfirm(wardId) {
       const ward = state.wards.find(w => w.id === wardId);
       if (!ward) return;
-      const wardVisitCount = state.visits.filter(v => v.wardId === wardId).length;
+      const wardVisits = state.visits.filter(v => v.wardId === wardId);
 
       showConfirmModal({
         title: 'STATION ENTFERNEN',
-        message: `Möchten Sie "${ward.stationNumber}" inklusive ${wardVisitCount} gespeicherter Rundgänge unwiderruflich löschen?`,
+        message: `Möchten Sie "${ward.stationNumber}" inklusive ${wardVisits.length} gespeicherter Rundgänge unwiderruflich löschen?`,
         confirmText: 'Station löschen',
         danger: true,
         onConfirm: () => {
+          if (!state.deletedIds.includes(wardId)) state.deletedIds.push(wardId);
+          wardVisits.forEach(v => {
+            if (!state.deletedIds.includes(v.id)) state.deletedIds.push(v.id);
+          });
           state.wards = state.wards.filter(w => w.id !== wardId);
           state.visits = state.visits.filter(v => v.wardId !== wardId);
-          saveState();
+          persistTerminalData({ markModified: true, triggerSync: true });
           state.ui.activeTab = 'STATIONS';
           state.ui.selectedWardId = null;
           renderApp();
@@ -1207,7 +1559,6 @@
         targetWard = sorted.find(w => w.id === specificWardId);
       }
       if (!targetWard) {
-        // Default to first ward not yet visited today, or the first ward overall
         targetWard = sorted.find(w => !state.visits.some(v => v.wardId === w.id && v.date === today)) || sorted[0];
       }
       state.ui.walkWardId = targetWard.id;
@@ -1221,11 +1572,11 @@
     }
 
     /* ==========================================================================
-       8. REAL .XLSX EXCEL EXPORT & JSON BACKUP ENGINE (SheetJS)
+       9. REAL .XLSX EXCEL EXPORT & JSON BACKUP ENGINE (SheetJS)
        ========================================================================== */
     function exportCompleteXLSX() {
       if (typeof XLSX === 'undefined') {
-        showToast('Excel-Exportbibliothek konnte nicht geladen werden.', 'error');
+        showToast('Excel-Bibliothek nicht verfügbar (bitte Internetverbindung prüfen).', 'error');
         return;
       }
 
@@ -1239,12 +1590,12 @@
           : 'Noch nicht besucht';
         return {
           'Stationsnummer': w.stationNumber,
-          'Stationsname': w.wardName || '',
-          'Adresse': w.location,
+          'Stationsname': w.stationName || '',
+          'Adresse': w.address || '',
           'Ansprechpartner': w.contactName || '',
           'Ansprechpartner-Rolle': w.contactRole || '',
           'Kontaktdaten': w.contactInfo || '',
-          'Postfach-Ort': w.mailboxLocation,
+          'Postfach-Ort': w.mailboxLocation || '',
           'Stationsanmerkungen': w.notes || '',
           'Anzahl Rundgänge': stats.visitCount,
           'Broad Consent Gesamtzahl': stats.totalConsents,
@@ -1264,7 +1615,7 @@
         const w = wardMap[v.wardId];
         return {
           'Stationsnummer': w ? w.stationNumber : 'Unbekannt',
-          'Stationsname': w ? (w.wardName || '') : '',
+          'Stationsname': w ? (w.stationName || '') : '',
           'Datum': formatDateDE(v.date),
           'Status': VISIT_STATUS[v.status]?.label || v.status,
           'Anzahl Broad Consents': v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0,
@@ -1299,7 +1650,7 @@
 
     function exportDayXLSX(targetDateISO) {
       if (typeof XLSX === 'undefined') {
-        showToast('Excel-Exportbibliothek konnte nicht geladen werden.', 'error');
+        showToast('Excel-Bibliothek nicht verfügbar (bitte Internetverbindung prüfen).', 'error');
         return;
       }
 
@@ -1317,8 +1668,8 @@
         const w = wardMap[v.wardId];
         return {
           'Stationsnummer': w ? w.stationNumber : 'Unbekannt',
-          'Stationsname': w ? (w.wardName || '') : '',
-          'Standort': w ? w.location : '',
+          'Stationsname': w ? (w.stationName || '') : '',
+          'Adresse': w ? (w.address || '') : '',
           'Datum': formatDateDE(v.date),
           'Status': VISIT_STATUS[v.status]?.label || v.status,
           'Anzahl Broad Consents': v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0,
@@ -1361,7 +1712,7 @@
     }
 
     /* ==========================================================================
-       9. UI COMPONENTS & VIEW RENDERERS
+       10. UI COMPONENTS & VIEW RENDERERS
        ========================================================================== */
     function renderStatusBadge(statusKey, compact = false) {
       const st = VISIT_STATUS[statusKey] || VISIT_STATUS.LEER;
@@ -1373,78 +1724,119 @@
       `;
     }
 
+    function renderHeaderSyncPill() {
+      const st = state.syncRuntime.status;
+      if (!isSyncConfigured() || st === 'UNCONFIGURED') {
+        return `
+          <button type="button" id="hud-sync-pill-btn" title="Cloud Sync unter SETTINGS einrichten" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 border border-white/25 text-white/90 font-mono text-[11px] font-bold uppercase tracking-wider rounded-[2px] flex items-center gap-1.5 transition-colors">
+            <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+            <span>● OFFLINE · LOKAL</span>
+          </button>
+        `;
+      }
+      if (st === 'SYNCING') {
+        return `
+          <button type="button" id="hud-sync-pill-btn" class="px-2.5 py-1 bg-zkimed-bluegrey text-white border border-white/35 font-mono text-[11px] font-bold uppercase tracking-wider rounded-[2px] flex items-center gap-1.5">
+            <span class="telemetry-dot">↻</span>
+            <span>SYNCING...</span>
+          </button>
+        `;
+      }
+      if (st === 'SYNCED') {
+        return `
+          <button type="button" id="hud-sync-pill-btn" title="Verbunden mit Google Sheets · Klicken für sofortigen Sync" class="px-2.5 py-1 bg-zkimed-green hover:opacity-90 text-white border border-emerald-200/40 font-mono text-[11px] font-bold uppercase tracking-wider rounded-[2px] flex items-center gap-1.5 transition-opacity">
+            <span>✓ CLOUD SYNCED</span>
+          </button>
+        `;
+      }
+      if (st === 'OFFLINE') {
+        return `
+          <button type="button" id="hud-sync-pill-btn" title="Keine Internetverbindung – Eingaben werden lokal gespeichert" class="px-2.5 py-1 bg-zkimed-amber text-white border border-amber-200/40 font-mono text-[11px] font-bold uppercase tracking-wider rounded-[2px] flex items-center gap-1.5">
+            <span>● OFFLINE · LOKAL</span>
+          </button>
+        `;
+      }
+      return `
+        <button type="button" id="hud-sync-pill-btn" title="${escapeHTML(state.syncRuntime.errorMessage || 'Sync-Fehler')}" class="px-2.5 py-1 bg-zkimed-red hover:bg-zkimed-redDark text-white border border-red-200/50 font-mono text-[11px] font-bold uppercase tracking-wider rounded-[2px] flex items-center gap-1.5">
+          <span>⚠ SYNC FEHLER</span>
+        </button>
+      `;
+    }
+
+    function bindHeaderSyncPillEvent() {
+      const btn = document.getElementById('hud-sync-pill-btn');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        if (isSyncConfigured()) {
+          runCloudSync({ mode: 'BIDIRECTIONAL', showToastFeedback: true });
+        } else {
+          state.ui.activeTab = 'SETTINGS';
+          renderApp();
+        }
+      });
+    }
+
     function renderHeader() {
       const stats = getGlobalStats();
-      const todayDE = formatDateDE(getTodayISO());
-      const inWalkMode = state.ui.activeTab === 'WALK_MODE';
+      const headerDate = formatHeaderDateDE();
 
       return `
         <header class="pt-3 sm:pt-4 mb-3">
-          <!-- Top Starware / Research Lab Telemetry Strip -->
+          <!-- Top Starware / Lunar Research Facility Telemetry Bar -->
           <div class="bg-space-headerDark text-white px-3 sm:px-4 py-1.5 rounded-t-[2px] border border-b-0 border-space-border flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono tracking-wider">
             <div class="flex items-center gap-2.5">
               <span class="inline-block w-2 h-2 bg-emerald-400 telemetry-dot"></span>
-              <span class="uppercase">${escapeHTML(state.settings.facilityName)}</span>
-              <span class="hidden md:inline text-white/40">|</span>
+              <span class="uppercase font-semibold">${escapeHTML(state.settings.facilityName)}</span>
+              <span class="hidden md:inline text-white/35">|</span>
               <span class="hidden md:inline text-white/80">${escapeHTML(state.settings.surveyTitle)}</span>
             </div>
-            <div class="flex items-center gap-3">
-              <span id="hud-save-indicator" class="text-white/85">
-                ${state.ui.lastSavedTime ? `GESPEICHERT · ${state.ui.lastSavedTime}` : 'DATEN GESPEICHERT · LOKAL'}
-              </span>
-              <span class="text-white/40">|</span>
-              <span class="font-bold text-white">${todayDE}</span>
+            <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+              <span id="hud-sync-pill-slot">${renderHeaderSyncPill()}</span>
+              <span class="text-white/35">|</span>
+              <span class="font-bold text-white">${escapeHTML(headerDate)}</span>
             </div>
           </div>
 
           <!-- Main Terminal Identification & Live Counters -->
           <div class="sf-module rounded-t-none p-3 sm:p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
-            <!-- Brand & Title -->
+            <!-- ZKIMED Emblem & Operational Title -->
             <div class="flex items-center gap-3 sm:gap-4">
               ${renderZkimedLogoSVG('w-14 h-14 sm:w-16 sm:h-16')}
               <div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <h1 class="font-display text-lg sm:text-2xl font-bold tracking-tight text-space-graphite leading-none">
-                    ZKIMED <span class="text-space-border font-normal">|</span> <span class="text-zkimed-red">CONSENT OPERATIONS</span>
-                  </h1>
-                </div>
+                <h1 class="font-display text-lg sm:text-2xl font-bold tracking-tight text-space-graphite leading-none">
+                  ZKIMED <span class="text-space-border font-normal">|</span> <span class="text-zkimed-red">CONSENT OPERATIONS</span>
+                </h1>
                 <p class="text-xs sm:text-sm text-space-slate mt-1">
                   Clinical Research · Ward Survey &amp; Consent Tracking
                 </p>
-                <div class="mt-1.5 flex items-center gap-2">
+                <div class="mt-1.5 flex flex-wrap items-center gap-2">
                   <span class="inline-block px-2 py-0.5 bg-space-metal border border-space-borderLight font-mono text-[11px] font-semibold text-space-graphite uppercase">
-                    AKTIV: ${escapeHTML(state.settings.surveyTitle)}
+                    SURVEY: ${escapeHTML(state.settings.surveyTitle)}
                   </span>
+                  ${state.ui.lastSavedClock ? `
+                    <span class="font-mono text-[11px] text-space-slate">
+                      LOKAL: ${state.ui.lastSavedClock}
+                    </span>
+                  ` : ''}
                 </div>
               </div>
             </div>
 
-            <!-- Live Mission Counters & Walk Mode Trigger -->
-            <div class="flex flex-wrap sm:flex-nowrap items-stretch gap-2.5 sm:gap-3">
-              <div class="flex-1 sm:flex-initial px-3.5 py-2 bg-space-panel border border-space-borderLight rounded-[2px] min-w-[125px]">
+            <!-- Live Mission Counters -->
+            <div class="grid grid-cols-2 sm:flex sm:flex-nowrap items-stretch gap-2.5 sm:gap-3">
+              <div class="px-3.5 py-2 bg-space-panel border border-space-borderLight rounded-[2px] min-w-[130px]">
                 <div class="font-display text-[10px] font-bold uppercase tracking-widest text-space-teal">Besucht heute</div>
                 <div class="font-mono text-xl sm:text-2xl font-bold text-space-graphite mt-0.5">
                   ${stats.visitedTodayCount}<span class="text-sm font-normal text-space-slate"> / ${stats.totalWards}</span>
                 </div>
               </div>
 
-              <div class="flex-1 sm:flex-initial px-3.5 py-2 bg-space-panel border border-space-borderLight rounded-[2px] min-w-[135px]">
+              <div class="px-3.5 py-2 bg-space-panel border border-space-borderLight rounded-[2px] min-w-[140px]">
                 <div class="font-display text-[10px] font-bold uppercase tracking-widest text-space-teal">Consents Gesamt</div>
                 <div class="font-mono text-xl sm:text-2xl font-bold text-zkimed-green mt-0.5">
                   ${stats.totalConsents}
                 </div>
               </div>
-
-              ${inWalkMode ? `
-                <button type="button" id="btn-exit-walk-header" class="touch-btn w-full sm:w-auto px-4 py-2.5 bg-space-graphite hover:bg-space-teal text-white font-display font-bold uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 border border-space-graphite">
-                  <span>✕ Walk Mode beenden</span>
-                </button>
-              ` : `
-                <button type="button" id="btn-launch-walk-header" class="touch-btn w-full sm:w-auto px-5 py-2.5 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm">
-                  ${ICONS.walk}
-                  <span>WALK MODE</span>
-                </button>
-              `}
             </div>
           </div>
         </header>
@@ -1455,30 +1847,34 @@
       const navItems = [
         { id: 'MISSION_CONTROL', label: 'MISSION CONTROL', sub: 'Dashboard', icon: ICONS.radar },
         { id: 'STATIONS', label: 'STATIONS', sub: `${state.wards.length} Stationen`, icon: ICONS.wards },
+        { id: 'WALK_MODE', label: 'WALK MODE', sub: 'Rundgang-Modus', icon: ICONS.walk },
         { id: 'RUNDGAENGE', label: 'RUNDGÄNGE', sub: `${state.visits.length} Einträge`, icon: ICONS.history },
         { id: 'EXPORT', label: 'DATA / EXPORT', sub: 'Excel .xlsx', icon: ICONS.export },
-        { id: 'SETTINGS', label: 'SETTINGS', sub: 'Konfiguration', icon: ICONS.settings }
+        { id: 'SETTINGS', label: 'SETTINGS', sub: isSyncConfigured() ? 'Cloud Sync aktiv' : 'Konfiguration', icon: ICONS.settings }
       ];
 
       const active = state.ui.activeTab === 'WARD_DETAIL' ? 'STATIONS' : state.ui.activeTab;
 
       return `
         <nav aria-label="Hauptnavigation" class="mb-4 sm:mb-5">
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
             ${navItems.map(item => {
               const isActive = active === item.id;
+              const isWalkHighlight = item.id === 'WALK_MODE' && !isActive;
               return `
-                <button type="button" data-nav="${item.id}" class="nav-tab-btn touch-btn px-3.5 py-2.5 border text-left flex items-center gap-3 ${
+                <button type="button" data-nav="${item.id}" class="nav-tab-btn touch-btn px-3 py-2.5 border text-left flex items-center gap-2.5 ${
                   isActive
                     ? 'bg-space-graphite text-white border-space-graphite sf-reticle shadow-sm'
-                    : 'bg-space-surface text-space-graphite border-space-border hover:bg-space-panel'
+                    : isWalkHighlight
+                      ? 'bg-zkimed-redLight text-zkimed-red border-zkimed-red/50 hover:bg-zkimed-red hover:text-white'
+                      : 'bg-space-surface text-space-graphite border-space-border hover:bg-space-panel'
                 }">
-                  <div class="${isActive ? 'text-zkimed-red' : 'text-space-teal'} shrink-0">
+                  <div class="${isActive ? 'text-zkimed-red' : isWalkHighlight ? 'text-current' : 'text-space-teal'} shrink-0">
                     ${item.icon}
                   </div>
                   <div class="min-w-0">
-                    <div class="font-display text-xs sm:text-sm font-bold tracking-wider uppercase truncate">${item.label}</div>
-                    <div class="text-[11px] ${isActive ? 'text-white/75' : 'text-space-slate'} truncate">${item.sub}</div>
+                    <div class="font-display text-xs font-bold tracking-wider uppercase truncate">${item.label}</div>
+                    <div class="text-[11px] ${isActive ? 'text-white/75' : isWalkHighlight ? 'opacity-85' : 'text-space-slate'} truncate">${item.sub}</div>
                   </div>
                 </button>
               `;
@@ -1563,9 +1959,9 @@
               <span class="sf-label">SCHNELLZUGRIFF · FIELD OPERATIONS</span>
               <div class="starware-bars" aria-hidden="true">
                 <span style="height: 10px"></span>
-                <span style="height: 15px"></span>
-                <span style="height: 20px"></span>
                 <span style="height: 14px"></span>
+                <span style="height: 19px"></span>
+                <span style="height: 13px"></span>
               </div>
             </div>
             <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1581,7 +1977,7 @@
 
               <button type="button" id="mc-open-stations" class="touch-btn min-h-[56px] px-4 py-3 bg-white hover:bg-space-panel text-space-graphite border border-space-border font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2.5">
                 ${ICONS.wards}
-                <span>Übersicht öffnen</span>
+                <span>Stationsübersicht öffnen</span>
               </button>
 
               <button type="button" id="mc-open-export" class="touch-btn min-h-[56px] px-4 py-3 bg-white hover:bg-space-panel text-space-graphite border border-space-border font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2.5">
@@ -1599,7 +1995,6 @@
                 <span class="sf-label">MISSIONSFORTSCHRITT · TELEMETRY</span>
               </div>
               <div class="p-4 sm:p-5 space-y-5 flex-1 flex flex-col justify-between">
-                <!-- Bar 1: Ever visited wards -->
                 <div>
                   <div class="flex justify-between items-baseline mb-1.5">
                     <span class="text-sm font-semibold text-space-graphite">Abgedeckte Stationen gesamt</span>
@@ -1610,7 +2005,6 @@
                   </div>
                 </div>
 
-                <!-- Bar 2: Visited today -->
                 <div>
                   <div class="flex justify-between items-baseline mb-1.5">
                     <span class="text-sm font-semibold text-space-graphite">Heutige Stationsabdeckung</span>
@@ -1621,7 +2015,6 @@
                   </div>
                 </div>
 
-                <!-- Bar 3: Status distribution across all visits -->
                 <div class="pt-3 border-t border-space-borderLight">
                   <div class="flex justify-between items-baseline mb-2">
                     <span class="font-display text-xs font-bold uppercase tracking-wider text-space-teal">Rundgang-Statusverteilung</span>
@@ -1685,7 +2078,7 @@
                           <span class="font-display font-bold text-base text-space-graphite">
                             ${escapeHTML(w ? w.stationNumber : 'Unbekannte Station')}
                           </span>
-                          ${w && w.wardName ? `<span class="text-xs text-space-slate truncate">· ${escapeHTML(w.wardName)}</span>` : ''}
+                          ${w && w.stationName ? `<span class="text-xs text-space-slate truncate">· ${escapeHTML(w.stationName)}</span>` : ''}
                         </div>
                         ${v.note ? `<p class="text-xs sm:text-sm text-space-slate mt-1 truncate">${escapeHTML(v.note)}</p>` : ''}
                       </div>
@@ -1708,7 +2101,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       VIEW 2: WARD OVERVIEW (STATIONS DIRECTORY)
+       VIEW 2: STATIONS DIRECTORY
        -------------------------------------------------------------------------- */
     function renderStationsView() {
       const q = state.ui.stationSearch.trim().toLowerCase();
@@ -1716,31 +2109,27 @@
       const sortBy = state.ui.stationSortBy;
       const sortDir = state.ui.stationSortDir;
 
-      // Enrich wards with stats
       let list = state.wards.map(w => ({
         ...w,
         stats: getWardStats(w.id)
       }));
 
-      // Search filter
       if (q) {
         list = list.filter(w =>
           w.stationNumber.toLowerCase().includes(q) ||
-          (w.wardName && w.wardName.toLowerCase().includes(q)) ||
-          w.location.toLowerCase().includes(q) ||
-          w.mailboxLocation.toLowerCase().includes(q) ||
+          (w.stationName && w.stationName.toLowerCase().includes(q)) ||
+          (w.address && w.address.toLowerCase().includes(q)) ||
+          (w.mailboxLocation && w.mailboxLocation.toLowerCase().includes(q)) ||
           (w.contactName && w.contactName.toLowerCase().includes(q))
         );
       }
 
-      // Status filter
       if (filter === 'UNVISITED') {
         list = list.filter(w => w.stats.visitCount === 0);
       } else if (filter === 'VISITED_TODAY') {
         list = list.filter(w => w.stats.visitedToday);
       }
 
-      // Sorting
       list.sort((a, b) => {
         let cmp = 0;
         if (sortBy === 'LAST_VISIT') {
@@ -1755,7 +2144,6 @@
 
       return `
         <div class="space-y-4">
-          <!-- Controls & Filter Module -->
           <section class="sf-module">
             <div class="sf-module-header justify-between">
               <span class="sf-label">STATIONSVERZEICHNIS · WARD DIRECTORY (${list.length} / ${state.wards.length})</span>
@@ -1766,7 +2154,6 @@
             </div>
 
             <div class="p-3.5 sm:p-4 space-y-3">
-              <!-- Search & Sort Row -->
               <div class="flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
                   <span class="absolute left-3 top-1/2 -translate-y-1/2 text-space-slate pointer-events-none">
@@ -1782,7 +2169,7 @@
                 </div>
 
                 <div class="flex flex-wrap sm:flex-nowrap gap-2">
-                  <select id="st-sort-select" aria-label="Sortieren nach" class="touch-input font-semibold text-sm bg-white min-w-[190px]">
+                  <select id="st-sort-select" aria-label="Sortieren nach" class="touch-input font-semibold text-sm bg-white min-w-[210px]">
                     <option value="NUMBER_ASC" ${sortBy === 'NUMBER' && sortDir === 'ASC' ? 'selected' : ''}>Stationsnummer (A → Z)</option>
                     <option value="NUMBER_DESC" ${sortBy === 'NUMBER' && sortDir === 'DESC' ? 'selected' : ''}>Stationsnummer (Z → A)</option>
                     <option value="LAST_VISIT_DESC" ${sortBy === 'LAST_VISIT' && sortDir === 'DESC' ? 'selected' : ''}>Letzter Rundgang (Neueste)</option>
@@ -1791,10 +2178,9 @@
                 </div>
               </div>
 
-              <!-- Filter Pills -->
               <div class="flex flex-wrap gap-2">
                 <button type="button" data-st-filter="ALL" class="st-filter-btn touch-btn px-4 py-2 border text-xs sm:text-sm font-semibold ${filter === 'ALL' ? 'bg-space-graphite text-white border-space-graphite' : 'bg-white text-space-graphite border-space-border hover:bg-space-panel'}">
-                  Alle Stationen (${state.wards.length})
+                  Alle (${state.wards.length})
                 </button>
                 <button type="button" data-st-filter="UNVISITED" class="st-filter-btn touch-btn px-4 py-2 border text-xs sm:text-sm font-semibold ${filter === 'UNVISITED' ? 'bg-zkimed-amber text-white border-zkimed-amber' : 'bg-white text-space-graphite border-space-border hover:bg-space-panel'}">
                   Noch nicht besucht (${state.wards.filter(w => getWardStats(w.id).visitCount === 0).length})
@@ -1806,7 +2192,6 @@
             </div>
           </section>
 
-          <!-- Ward Cards List -->
           ${list.length === 0 ? `
             <div class="sf-module p-6">
               <div class="sf-stripes p-8 text-center">
@@ -1821,7 +2206,6 @@
                 return `
                   <article data-ward-card="${w.id}" class="ward-card sf-module hover:border-space-graphite cursor-pointer transition-colors flex flex-col justify-between ${st.visitedToday ? 'border-l-4 border-l-zkimed-green' : st.visitCount === 0 ? 'border-l-4 border-l-zkimed-amber' : ''}">
                     <div class="p-4 space-y-3">
-                      <!-- Card Header -->
                       <div class="flex items-start justify-between gap-2">
                         <div>
                           <div class="flex flex-wrap items-center gap-2">
@@ -1836,7 +2220,7 @@
                               </span>
                             ` : ''}
                           </div>
-                          ${w.wardName ? `<div class="text-sm font-semibold text-space-slate mt-0.5">${escapeHTML(w.wardName)}</div>` : ''}
+                          ${w.stationName ? `<div class="text-sm font-semibold text-space-slate mt-0.5">${escapeHTML(w.stationName)}</div>` : ''}
                         </div>
 
                         <div class="text-right shrink-0 bg-space-panel border border-space-borderLight px-3 py-1.5">
@@ -1845,11 +2229,10 @@
                         </div>
                       </div>
 
-                      <!-- Location & Contact -->
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-space-slate">
                         <div class="flex items-center gap-1.5 truncate">
                           <span class="text-space-teal shrink-0">${ICONS.pin}</span>
-                          <span class="truncate">${escapeHTML(w.location)}</span>
+                          <span class="truncate">${escapeHTML(w.address || '—')}</span>
                         </div>
                         <div class="flex items-center gap-1.5 truncate">
                           <span class="text-space-teal shrink-0">${ICONS.user}</span>
@@ -1862,12 +2245,11 @@
                         <span class="text-zkimed-red mt-0.5 shrink-0">${ICONS.mailbox}</span>
                         <div class="text-xs sm:text-sm">
                           <span class="font-display font-bold uppercase text-[11px] tracking-wider text-space-teal mr-1.5">Postfach:</span>
-                          <span class="font-medium text-space-graphite">${escapeHTML(w.mailboxLocation)}</span>
+                          <span class="font-medium text-space-graphite">${escapeHTML(w.mailboxLocation || '—')}</span>
                         </div>
                       </div>
                     </div>
 
-                    <!-- Card Footer: Last Visit + Direct Quick-Add Visit Button -->
                     <div class="px-4 py-3 bg-space-panel border-t border-space-borderLight flex flex-wrap items-center justify-between gap-2">
                       <div class="text-xs">
                         ${st.latestVisit ? `
@@ -1916,7 +2298,6 @@
 
       return `
         <div class="space-y-4">
-          <!-- Top Breadcrumb & Prev/Next Ward Bar -->
           <div class="flex flex-wrap items-center justify-between gap-2">
             <button type="button" id="wd-back-btn" class="touch-btn px-4 py-2.5 bg-white hover:bg-space-panel border border-space-border font-display text-xs sm:text-sm font-bold uppercase tracking-wider text-space-graphite">
               ← Zurück zur Übersicht
@@ -1924,18 +2305,17 @@
 
             <div class="flex items-center gap-2">
               <button type="button" id="wd-prev-btn" ${!prevWard ? 'disabled' : ''} class="touch-btn px-3.5 py-2.5 border border-space-border bg-white font-display text-xs font-bold uppercase tracking-wider ${prevWard ? 'hover:bg-space-panel text-space-graphite' : 'opacity-40 cursor-not-allowed'}">
-                ‹ Vorherige
+                ‹ Vorherige Station
               </button>
               <span class="font-mono text-xs font-semibold px-2.5 py-1 bg-space-metal border border-space-borderLight">
                 ${idx + 1} / ${sorted.length}
               </span>
               <button type="button" id="wd-next-btn" ${!nextWard ? 'disabled' : ''} class="touch-btn px-3.5 py-2.5 border border-space-border bg-white font-display text-xs font-bold uppercase tracking-wider ${nextWard ? 'hover:bg-space-panel text-space-graphite' : 'opacity-40 cursor-not-allowed'}">
-                Nächste ›
+                Nächste Station ›
               </button>
             </div>
           </div>
 
-          <!-- Ward Identity Header & Mailbox Highlight -->
           <section class="sf-module">
             <div class="sf-module-header accent-red justify-between">
               <span class="sf-label">STATIONSPROFIL · WARD TELEMETRY</span>
@@ -1956,18 +2336,16 @@
                   ` : ''}
                 </div>
                 <p class="text-sm sm:text-base text-space-slate mt-1">
-                  ${ward.wardName ? `<strong class="text-space-graphite">${escapeHTML(ward.wardName)}</strong> · ` : ''}${escapeHTML(ward.location)}
+                  ${ward.stationName ? `<strong class="text-space-graphite">${escapeHTML(ward.stationName)}</strong> · ` : ''}${escapeHTML(ward.address || '')}
                 </p>
 
-                <!-- Fast-access Mailbox Banner -->
                 <div class="mt-3 inline-flex items-center gap-2.5 px-3.5 py-2 bg-space-panel border border-space-border">
                   <span class="text-zkimed-red">${ICONS.mailbox}</span>
                   <span class="font-display text-xs font-bold uppercase tracking-wider text-space-teal">Postfach:</span>
-                  <span class="text-sm font-semibold text-space-graphite">${escapeHTML(ward.mailboxLocation)}</span>
+                  <span class="text-sm font-semibold text-space-graphite">${escapeHTML(ward.mailboxLocation || '—')}</span>
                 </div>
               </div>
 
-              <!-- Ward Key Counters -->
               <div class="grid grid-cols-3 gap-2.5 shrink-0">
                 <div class="p-3 bg-zkimed-greenLight border border-zkimed-green/40 text-center min-w-[95px]">
                   <div class="font-display text-[10px] font-bold uppercase tracking-wider text-zkimed-green">Consents</div>
@@ -2000,7 +2378,6 @@
             </div>
           </section>
 
-          <!-- SUB-TAB CONTENT -->
           ${activeSubTab === 'OVERVIEW' ? renderWardOverviewTab(ward) : ''}
           ${activeSubTab === 'HISTORY' ? renderWardHistoryTab(ward, visits) : ''}
           ${activeSubTab === 'QUICK_ENTRY' ? renderWardQuickEntryTab(ward, nextWard) : ''}
@@ -2024,18 +2401,18 @@
               </div>
               <div>
                 <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">Stationsname / Fachbereich</label>
-                <input type="text" name="wardName" value="${escapeHTML(ward.wardName || '')}" class="touch-input w-full" />
+                <input type="text" name="stationName" value="${escapeHTML(ward.stationName || '')}" class="touch-input w-full" />
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">Adresse / Standort im Krankenhaus *</label>
-                <input type="text" name="location" value="${escapeHTML(ward.location)}" required class="touch-input w-full" />
+                <input type="text" name="address" value="${escapeHTML(ward.address || '')}" required class="touch-input w-full" />
               </div>
               <div>
                 <label class="block font-display text-xs font-bold uppercase tracking-wider text-zkimed-red mb-1.5">Postfach-Ort *</label>
-                <input type="text" name="mailboxLocation" value="${escapeHTML(ward.mailboxLocation)}" required class="touch-input w-full" />
+                <input type="text" name="mailboxLocation" value="${escapeHTML(ward.mailboxLocation || '')}" required class="touch-input w-full" />
               </div>
             </div>
 
@@ -2196,7 +2573,7 @@
               </div>
             </div>
 
-            <!-- 3. DYNAMIC QUANTITY INPUT (Broad Consent eingesammelt) -->
+            <!-- 3. DYNAMIC QUANTITY INPUT -->
             ${qeStatus === 'BROAD_CONSENT' ? `
               <div class="p-4 sm:p-5 bg-zkimed-greenLight border-2 border-zkimed-green">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
@@ -2229,14 +2606,14 @@
               <input type="text" id="qe-note-input" value="${escapeHTML(qeNote)}" placeholder="Kurze Beobachtung oder Hinweis eingeben..." class="touch-input w-full mb-2.5" />
               <div class="flex flex-wrap gap-2">
                 ${state.settings.quickNotes.map(tpl => `
-                  <button type="button" data-qe-chip="${escapeHTML(tpl)}" class="qe-note-chip touch-btn min-h-[40px] px-3 py-1.5 bg-space-panel hover:bg-space-metal border border-space-borderLight text-xs text-space-graphite text-left">
+                  <button type="button" data-qe-chip="${escapeHTML(tpl)}" class="qe-note-chip touch-btn min-h-[42px] px-3 py-1.5 bg-space-panel hover:bg-space-metal border border-space-borderLight text-xs text-space-graphite text-left">
                     + ${escapeHTML(tpl)}
                   </button>
                 `).join('')}
               </div>
             </div>
 
-            <!-- STICKY / PROMINENT SAVE ACTIONS -->
+            <!-- STICKY SAVE ACTIONS -->
             <div class="sticky bottom-2 z-20 p-3 bg-space-surface border border-space-border shadow-md flex flex-col sm:flex-row gap-3">
               <button type="button" id="qe-save-btn" class="touch-btn min-h-[56px] flex-1 px-5 py-3 bg-space-graphite hover:bg-space-teal text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
                 ${ICONS.check}
@@ -2245,7 +2622,7 @@
 
               ${nextWard ? `
                 <button type="button" id="qe-save-next-btn" class="touch-btn min-h-[56px] flex-1 px-5 py-3 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
-                  <span>Speichern &amp; Nächste (${escapeHTML(nextWard.stationNumber)}) →</span>
+                  <span>Speichern &amp; Nächste Station (${escapeHTML(nextWard.stationNumber)}) →</span>
                 </button>
               ` : ''}
             </div>
@@ -2255,7 +2632,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       VIEW 4: CONTINUOUS WALK MODE (STREAMLINED WARD-TO-WARD FIELD MODE)
+       VIEW 4: CONTINUOUS WALK MODE
        -------------------------------------------------------------------------- */
     function renderWalkMode() {
       const sorted = getSortedWardsList();
@@ -2283,7 +2660,6 @@
 
       return `
         <div class="space-y-4">
-          <!-- WALK MODE BANNER & STATION PROGRESS STRIP -->
           <section class="sf-module border-zkimed-red">
             <div class="bg-zkimed-red text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-2.5">
@@ -2304,7 +2680,7 @@
                 const isCurrent = w.id === ward.id;
                 const doneToday = state.visits.some(v => v.wardId === w.id && v.date === today);
                 return `
-                  <button type="button" data-wm-select="${w.id}" class="wm-pill-btn touch-btn min-h-[44px] px-3.5 py-2 border shrink-0 font-mono text-xs font-bold flex items-center gap-1.5 ${
+                  <button type="button" data-wm-select="${w.id}" class="wm-pill-btn touch-btn min-h-[48px] px-3.5 py-2 border shrink-0 font-mono text-xs font-bold flex items-center gap-1.5 ${
                     isCurrent
                       ? 'bg-space-graphite text-white border-space-graphite sf-reticle'
                       : doneToday
@@ -2318,15 +2694,14 @@
               }).join('')}
             </div>
 
-            <!-- Current Station Field Briefing -->
+            <!-- Current Station Briefing & Fast Entry -->
             <div class="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
-              <!-- Left Column: Station Essentials & Mailbox -->
               <div class="lg:col-span-5 space-y-3.5 border-b lg:border-b-0 lg:border-r border-space-borderLight pb-4 lg:pb-0 lg:pr-5">
                 <div class="flex items-start justify-between gap-2">
                   <div>
                     <span class="font-mono text-xs font-bold text-space-teal">STATION ${currentIdx + 1} VON ${sorted.length}</span>
                     <h2 class="font-display text-2xl sm:text-3xl font-bold text-space-graphite mt-0.5">${escapeHTML(ward.stationNumber)}</h2>
-                    ${ward.wardName ? `<div class="text-base font-semibold text-space-slate">${escapeHTML(ward.wardName)}</div>` : ''}
+                    ${ward.stationName ? `<div class="text-base font-semibold text-space-slate">${escapeHTML(ward.stationName)}</div>` : ''}
                   </div>
                   ${wardStats.visitedToday ? `
                     <span class="px-2.5 py-1 bg-zkimed-green text-white font-mono text-xs font-bold">✓ HEUTE ERFASST</span>
@@ -2338,13 +2713,13 @@
                     ${ICONS.mailbox}
                     <span>Postfach-Ort</span>
                   </div>
-                  <div class="text-base font-bold text-space-graphite mt-1">${escapeHTML(ward.mailboxLocation)}</div>
+                  <div class="text-base font-bold text-space-graphite mt-1">${escapeHTML(ward.mailboxLocation || '—')}</div>
                 </div>
 
                 <div class="space-y-2 text-sm">
                   <div>
                     <span class="font-display text-xs font-bold uppercase text-space-teal block">Standort</span>
-                    <span class="text-space-graphite font-medium">${escapeHTML(ward.location)}</span>
+                    <span class="text-space-graphite font-medium">${escapeHTML(ward.address || '—')}</span>
                   </div>
                   <div>
                     <span class="font-display text-xs font-bold uppercase text-space-teal block">Ansprechpartner</span>
@@ -2368,17 +2743,15 @@
                 </div>
               </div>
 
-              <!-- Right Column: Fast Consent Entry -->
               <div class="lg:col-span-7 space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <span class="font-display text-xs font-bold uppercase tracking-wider text-space-teal">Rundgang dokumentieren</span>
                   <div class="flex items-center gap-2">
                     <label for="wm-date-input" class="text-xs font-semibold text-space-slate">Datum:</label>
-                    <input type="date" id="wm-date-input" value="${escapeHTML(walkDate)}" class="touch-input min-h-[42px] py-1.5 px-3 font-mono text-sm font-semibold" />
+                    <input type="date" id="wm-date-input" value="${escapeHTML(walkDate)}" class="touch-input min-h-[48px] py-1.5 px-3 font-mono text-sm font-semibold" />
                   </div>
                 </div>
 
-                <!-- Status Buttons -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                   ${Object.values(VISIT_STATUS).map(st => {
                     const active = walkStatus === st.key;
@@ -2396,15 +2769,14 @@
                   }).join('')}
                 </div>
 
-                <!-- Dynamic Counter -->
                 ${walkStatus === 'BROAD_CONSENT' ? `
                   <div class="p-4 bg-zkimed-greenLight border-2 border-zkimed-green">
                     <div class="flex items-center justify-between mb-2">
                       <span class="font-display text-xs font-bold uppercase tracking-wider text-zkimed-green">Anzahl Broad Consents</span>
                       <div class="flex gap-1.5">
-                        <button type="button" data-wm-add="1" class="wm-quick-add touch-btn min-h-[38px] px-2.5 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+1</button>
-                        <button type="button" data-wm-add="2" class="wm-quick-add touch-btn min-h-[38px] px-2.5 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+2</button>
-                        <button type="button" data-wm-add="5" class="wm-quick-add touch-btn min-h-[38px] px-2.5 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+5</button>
+                        <button type="button" data-wm-add="1" class="wm-quick-add touch-btn min-h-[42px] px-3 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+1</button>
+                        <button type="button" data-wm-add="2" class="wm-quick-add touch-btn min-h-[42px] px-3 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+2</button>
+                        <button type="button" data-wm-add="5" class="wm-quick-add touch-btn min-h-[42px] px-3 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+5</button>
                       </div>
                     </div>
                     <div class="flex items-center gap-3">
@@ -2415,25 +2787,23 @@
                   </div>
                 ` : ''}
 
-                <!-- Quick Note -->
                 <div>
                   <input type="text" id="wm-note-input" value="${escapeHTML(walkNote)}" placeholder="Optionale Rundgangsnotiz..." class="touch-input w-full mb-2" />
                   <div class="flex flex-wrap gap-1.5">
                     ${state.settings.quickNotes.map(tpl => `
-                      <button type="button" data-wm-chip="${escapeHTML(tpl)}" class="wm-note-chip touch-btn min-h-[38px] px-2.5 py-1 bg-space-panel hover:bg-space-metal border border-space-borderLight text-xs text-space-graphite text-left">
+                      <button type="button" data-wm-chip="${escapeHTML(tpl)}" class="wm-note-chip touch-btn min-h-[42px] px-2.5 py-1 bg-space-panel hover:bg-space-metal border border-space-borderLight text-xs text-space-graphite text-left">
                         + ${escapeHTML(tpl)}
                       </button>
                     `).join('')}
                   </div>
                 </div>
 
-                <!-- Walk Mode Primary Actions -->
                 <div class="pt-2 flex flex-col sm:flex-row gap-3">
                   <button type="button" id="wm-save-next-btn" class="touch-btn min-h-[58px] flex-1 px-5 py-3 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2 shadow-sm">
                     <span>SPEICHERN &amp; NÄCHSTE STATION (${escapeHTML(nextWard.stationNumber)}) →</span>
                   </button>
                   <button type="button" id="wm-skip-btn" class="touch-btn min-h-[58px] px-5 py-3 bg-white hover:bg-space-panel border border-space-border text-space-graphite font-display font-bold uppercase tracking-wider text-xs sm:text-sm">
-                    Überspringen →
+                    Station überspringen →
                   </button>
                 </div>
               </div>
@@ -2466,7 +2836,7 @@
           return (
             (v.note && v.note.toLowerCase().includes(q)) ||
             (w && w.stationNumber.toLowerCase().includes(q)) ||
-            (w && w.wardName && w.wardName.toLowerCase().includes(q))
+            (w && w.stationName && w.stationName.toLowerCase().includes(q))
           );
         });
       }
@@ -2476,7 +2846,6 @@
         return (b.createdAt || 0) - (a.createdAt || 0);
       });
 
-      // Group by date
       const groupsMap = new Map();
       filtered.forEach(v => {
         if (!groupsMap.has(v.date)) groupsMap.set(v.date, []);
@@ -2508,7 +2877,7 @@
                 <select id="log-station-select" class="touch-input w-full text-sm">
                   <option value="ALL">Alle Stationen</option>
                   ${sortedWards.map(w => `
-                    <option value="${w.id}" ${state.ui.logStationFilter === w.id ? 'selected' : ''}>${escapeHTML(w.stationNumber)} ${w.wardName ? `(${escapeHTML(w.wardName)})` : ''}</option>
+                    <option value="${w.id}" ${state.ui.logStationFilter === w.id ? 'selected' : ''}>${escapeHTML(w.stationNumber)} ${w.stationName ? `(${escapeHTML(w.stationName)})` : ''}</option>
                   `).join('')}
                 </select>
               </div>
@@ -2562,7 +2931,7 @@
                             <button type="button" data-open-ward="${v.wardId}" class="log-ward-link font-display text-base font-bold text-space-graphite hover:text-zkimed-red underline">
                               ${escapeHTML(w ? w.stationNumber : 'Unbekannte Station')}
                             </button>
-                            ${w && w.wardName ? `<span class="text-xs text-space-slate">${escapeHTML(w.wardName)}</span>` : ''}
+                            ${w && w.stationName ? `<span class="text-xs text-space-slate">${escapeHTML(w.stationName)}</span>` : ''}
                             ${renderStatusBadge(v.status, true)}
                             ${v.status === 'BROAD_CONSENT' ? `
                               <span class="font-mono text-xs font-bold px-2 py-0.5 bg-zkimed-green text-white">
@@ -2601,7 +2970,6 @@
       const stats = getGlobalStats();
       const selectedDate = state.ui.exportDate || getTodayISO();
 
-      // All unique dates with recorded visits, newest first
       const uniqueDates = Array.from(new Set(state.visits.map(v => v.date))).sort((a, b) => b.localeCompare(a));
       const dayVisits = state.visits
         .filter(v => v.date === selectedDate)
@@ -2624,11 +2992,11 @@
                   <div class="space-y-2 text-xs">
                     <div class="p-3 bg-space-panel border border-space-borderLight">
                       <div class="font-display font-bold uppercase text-space-graphite">Blatt 1: Stationsübersicht (${stats.totalWards} Zeilen)</div>
-                      <div class="text-space-slate mt-0.5">Stationsnummer, Name, Adresse, Ansprechpartner, Rolle, Kontakt, Postfach-Ort, Notizen, Rundgänge, Consents Gesamt, Letzter Rundgang &amp; Status.</div>
+                      <div class="text-space-slate mt-0.5">Stationsnummer, Stationsname, Adresse, Ansprechpartner, Rolle, Kontaktdaten, Postfach-Ort, Stationsanmerkungen, Anzahl Rundgänge, Broad Consent Gesamtzahl, Letzter Rundgang &amp; Letzter Status.</div>
                     </div>
                     <div class="p-3 bg-space-panel border border-space-borderLight">
                       <div class="font-display font-bold uppercase text-space-graphite">Blatt 2: Rundgänge (${stats.totalVisits} Zeilen)</div>
-                      <div class="text-space-slate mt-0.5">Chronologische Einzelauflistung aller dokumentierten Rundgänge mit Datum, Status, Anzahl Broad Consents und Rundgangsnotiz.</div>
+                      <div class="text-space-slate mt-0.5">Stationsnummer, Stationsname, Datum, Status, Anzahl Broad Consents und Rundgangsnotiz.</div>
                     </div>
                   </div>
                 </div>
@@ -2664,7 +3032,7 @@
                           const count = state.visits.filter(v => v.date === d).length;
                           const isSel = d === selectedDate;
                           return `
-                            <button type="button" data-exp-quick-date="${d}" class="exp-quick-date touch-btn min-h-[38px] px-3 py-1 border font-mono text-xs font-bold ${isSel ? 'bg-space-graphite text-white border-space-graphite' : 'bg-white text-space-graphite border-space-border hover:bg-space-panel'}">
+                            <button type="button" data-exp-quick-date="${d}" class="exp-quick-date touch-btn min-h-[40px] px-3 py-1 border font-mono text-xs font-bold ${isSel ? 'bg-space-graphite text-white border-space-graphite' : 'bg-white text-space-graphite border-space-border hover:bg-space-panel'}">
                               ${formatDateDE(d)} (${count})
                             </button>
                           `;
@@ -2707,7 +3075,7 @@
                   <thead>
                     <tr class="bg-space-panel border-b border-space-border font-display text-xs uppercase tracking-wider text-space-teal">
                       <th class="p-3">Station</th>
-                      <th class="p-3">Standort</th>
+                      <th class="p-3">Adresse</th>
                       <th class="p-3">Status</th>
                       <th class="p-3">Consents</th>
                       <th class="p-3">Notiz</th>
@@ -2720,7 +3088,7 @@
                       return `
                         <tr class="hover:bg-space-panel/50">
                           <td class="p-3 font-display font-bold text-space-graphite whitespace-nowrap">${escapeHTML(w ? w.stationNumber : '—')}</td>
-                          <td class="p-3 text-space-slate">${escapeHTML(w ? w.location : '—')}</td>
+                          <td class="p-3 text-space-slate">${escapeHTML(w ? (w.address || '—') : '—')}</td>
                           <td class="p-3 whitespace-nowrap">${renderStatusBadge(v.status, true)}</td>
                           <td class="p-3 font-mono font-bold">${v.status === 'BROAD_CONSENT' ? v.consentCount : 0}</td>
                           <td class="p-3 text-space-slate">${escapeHTML(v.note || '—')}</td>
@@ -2759,11 +3127,148 @@
     }
 
     /* --------------------------------------------------------------------------
-       VIEW 7: SETTINGS
+       VIEW 7: SETTINGS (GOOGLE SHEETS CLOUD SYNC & TERMINAL CONFIG)
        -------------------------------------------------------------------------- */
+    function renderSettingsSyncStatusHTML() {
+      const st = state.syncRuntime.status;
+      const configured = isSyncConfigured();
+
+      let badgeHtml = `<span class="px-2.5 py-1 bg-space-metal border border-space-border text-space-graphite font-mono text-xs font-bold uppercase">● NICHT KONFIGURIERT · NUR LOKAL</span>`;
+      if (configured) {
+        if (st === 'SYNCED') {
+          badgeHtml = `<span class="px-2.5 py-1 bg-zkimed-green text-white font-mono text-xs font-bold uppercase">✓ CLOUD SYNCED</span>`;
+        } else if (st === 'SYNCING') {
+          badgeHtml = `<span class="px-2.5 py-1 bg-zkimed-bluegrey text-white font-mono text-xs font-bold uppercase">↻ SYNCING...</span>`;
+        } else if (st === 'OFFLINE') {
+          badgeHtml = `<span class="px-2.5 py-1 bg-zkimed-amber text-white font-mono text-xs font-bold uppercase">● OFFLINE · LOKAL</span>`;
+        } else if (st === 'ERROR') {
+          badgeHtml = `<span class="px-2.5 py-1 bg-zkimed-red text-white font-mono text-xs font-bold uppercase">⚠ SYNC FEHLER</span>`;
+        }
+      }
+
+      return `
+        <div class="p-3.5 bg-space-panel border border-space-borderLight space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="font-display text-xs font-bold uppercase tracking-wider text-space-teal">Sync-Status:</span>
+              ${badgeHtml}
+            </div>
+            <span class="font-mono text-xs text-space-slate">
+              Letzter Abgleich: <strong>${formatTimestampShort(state.syncConfig.lastSyncedAt)}</strong>
+            </span>
+          </div>
+          ${st === 'ERROR' && state.syncRuntime.errorMessage ? `
+            <div class="p-2.5 bg-zkimed-redLight border border-zkimed-red text-zkimed-red text-xs sm:text-sm font-medium">
+              ${escapeHTML(state.syncRuntime.errorMessage)}
+            </div>
+          ` : ''}
+          ${state.pendingPush && configured ? `
+            <div class="text-xs text-zkimed-amber font-semibold">
+              Ausstehender Upload: Lokale Änderungen werden automatisch übertragen, sobald eine Online-Verbindung besteht.
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
     function renderSettingsView() {
+      const configured = isSyncConfigured();
+
       return `
         <div class="space-y-5">
+          <!-- CLOUD SYNC · GOOGLE SHEETS CONFIGURATION CARD -->
+          <section class="sf-module border-space-graphite">
+            <div class="sf-module-header accent-green justify-between">
+              <div class="flex items-center gap-2">
+                <span class="sf-label">CLOUD SYNC · GOOGLE SHEETS</span>
+              </div>
+              <span class="font-mono text-[11px] font-bold text-space-teal">OFFLINE-FIRST · IPAD &amp; PC</span>
+            </div>
+
+            <form id="cloud-sync-form" class="p-4 sm:p-6 space-y-4">
+              <p class="text-xs sm:text-sm text-space-slate leading-relaxed">
+                Verbinden Sie dieses Terminal mit Ihrem persönlichen Google Apps Script, um Stationen und Rundgänge automatisch zwischen Ihrem iPad und PC abzugleichen. Alle Eingaben bleiben auch ohne WLAN vollständig offline-fähig.
+              </p>
+
+              <div id="settings-sync-status-panel">
+                ${renderSettingsSyncStatusHTML()}
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                <div class="lg:col-span-7">
+                  <label for="sync-url-input" class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                    Google Apps Script Web-App-URL *
+                  </label>
+                  <input
+                    type="url"
+                    id="sync-url-input"
+                    value="${escapeHTML(state.syncConfig.webAppUrl)}"
+                    placeholder="https://script.google.com/macros/s/.../exec"
+                    class="touch-input w-full font-mono text-xs sm:text-sm"
+                  />
+                </div>
+
+                <div class="lg:col-span-5">
+                  <label for="sync-token-input" class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                    Sicherheitsschlüssel (SECRET_TOKEN) *
+                  </label>
+                  <div class="flex gap-2">
+                    <input
+                      type="${state.ui.showSyncToken ? 'text' : 'password'}"
+                      id="sync-token-input"
+                      value="${escapeHTML(state.syncConfig.secretToken)}"
+                      placeholder="Ihr geheimes Passwort"
+                      class="touch-input flex-1 font-mono text-sm"
+                    />
+                    <button
+                      type="button"
+                      id="sync-toggle-token"
+                      class="touch-btn px-3.5 border border-space-border bg-white hover:bg-space-panel font-display text-xs font-bold uppercase text-space-graphite shrink-0"
+                    >
+                      ${state.ui.showSyncToken ? 'Verbergen' : 'Anzeigen'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-space-borderLight">
+                <div class="flex flex-wrap gap-2.5">
+                  <button type="submit" class="touch-btn px-5 py-3 bg-zkimed-green hover:opacity-95 text-white font-display text-xs sm:text-sm font-bold uppercase tracking-wider shadow-sm">
+                    Speichern &amp; Synchronisieren
+                  </button>
+
+                  ${configured ? `
+                    <button type="button" id="sync-now-btn" class="touch-btn px-4 py-3 border border-space-graphite bg-white hover:bg-space-panel text-space-graphite font-display text-xs font-bold uppercase tracking-wider">
+                      Jetzt synchronisieren
+                    </button>
+                    <button type="button" id="sync-force-push-btn" class="touch-btn px-4 py-3 border border-space-border bg-space-panel hover:bg-space-metal text-space-graphite font-display text-xs font-bold uppercase tracking-wider">
+                      Cloud-Daten überschreiben (Push)
+                    </button>
+                  ` : ''}
+                </div>
+
+                ${configured ? `
+                  <button type="button" id="sync-disconnect-btn" class="touch-btn px-4 py-3 border border-zkimed-red/40 bg-zkimed-redLight hover:bg-zkimed-red hover:text-white text-zkimed-red font-display text-xs font-bold uppercase tracking-wider">
+                    Sync trennen
+                  </button>
+                ` : ''}
+              </div>
+
+              <!-- Collapsible Google Apps Script Reference -->
+              <details class="border border-space-borderLight bg-space-panel">
+                <summary class="px-4 py-3 cursor-pointer font-display text-xs font-bold uppercase tracking-wider text-space-teal select-none">
+                  ▸ Passenden Google Apps Script Code anzeigen (für Code.gs)
+                </summary>
+                <div class="p-4 pt-0 space-y-2">
+                  <p class="text-xs text-space-slate">
+                    Falls Sie das Skript noch nicht in Ihrer Google-Tabelle unter <strong>Erweiterungen → Apps Script</strong> hinterlegt haben, fügen Sie diesen Code ein und veröffentlichen Sie ihn als Web-App (<em>Ausführen als: Ich</em>, <em>Zugriff: Jeder</em>):
+                  </p>
+                  <pre class="p-3 bg-space-graphite text-slate-100 font-mono text-[11px] overflow-x-auto rounded-[2px]">${escapeHTML(APPS_SCRIPT_REFERENCE_CODE)}</pre>
+                </div>
+              </details>
+            </form>
+          </section>
+
           <!-- Terminal Configuration -->
           <section class="sf-module">
             <div class="sf-module-header">
@@ -2810,7 +3315,7 @@
                 ${state.settings.quickNotes.map((note, idx) => `
                   <div class="p-3 bg-white flex items-center justify-between gap-3">
                     <span class="text-sm text-space-graphite">${escapeHTML(note)}</span>
-                    <button type="button" data-del-chip="${idx}" class="del-chip-btn touch-btn min-h-[38px] px-3 py-1 border border-space-border bg-space-panel hover:bg-zkimed-red hover:text-white hover:border-zkimed-red text-xs font-semibold">
+                    <button type="button" data-del-chip="${idx}" class="del-chip-btn touch-btn min-h-[42px] px-3 py-1 border border-space-border bg-space-panel hover:bg-zkimed-red hover:text-white hover:border-zkimed-red text-xs font-semibold">
                       Entfernen
                     </button>
                   </div>
@@ -2826,11 +3331,11 @@
             </div>
             <div class="p-5 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-4">
               <div class="text-sm text-space-slate">
-                Alle Änderungen werden automatisch lokal im Browser gespeichert (Offline-fähig).
+                Alle Änderungen werden sofort lokal im Browser gespeichert (Offline-fähig).
               </div>
               <div class="flex flex-wrap gap-3">
                 <button type="button" id="set-reload-demo" class="touch-btn px-4 py-2.5 border border-space-border bg-white hover:bg-space-panel font-display text-xs font-bold uppercase tracking-wider text-space-graphite">
-                  Demodaten wiederherstellen
+                  Demodaten laden
                 </button>
                 <button type="button" id="set-clear-all" class="touch-btn px-4 py-2.5 border border-zkimed-red bg-zkimed-redLight hover:bg-zkimed-red hover:text-white font-display text-xs font-bold uppercase tracking-wider text-zkimed-red">
                   Alle Daten löschen
@@ -2843,7 +3348,7 @@
     }
 
     /* ==========================================================================
-       10. MAIN RENDER ORCHESTRATOR & EVENT BINDINGS
+       11. MAIN RENDER ORCHESTRATOR & EVENT BINDINGS
        ========================================================================== */
     function renderApp() {
       const app = document.getElementById('app');
@@ -2878,33 +3383,23 @@
 
       app.innerHTML = `
         ${renderHeader()}
-        ${state.ui.activeTab !== 'WALK_MODE' ? renderNavigation() : ''}
-        <main class="flex-1">
-          ${mainContent}
-        </main>
+        ${renderNavigation()}
+        <main class="flex-1">${mainContent}</main>
       `;
 
-      bindEvents();
-    }
-
-    function bindEvents() {
-      // Header Walk Mode launch/exit
-      const launchWalkBtn = document.getElementById('btn-launch-walk-header');
-      if (launchWalkBtn) launchWalkBtn.addEventListener('click', () => startWalkMode());
-
-      const exitWalkHeaderBtn = document.getElementById('btn-exit-walk-header');
-      if (exitWalkHeaderBtn) {
-        exitWalkHeaderBtn.addEventListener('click', () => {
-          state.ui.activeTab = 'MISSION_CONTROL';
-          renderApp();
-        });
-      }
+      // Header Sync Pill
+      bindHeaderSyncPillEvent();
 
       // Navigation Tabs
       document.querySelectorAll('.nav-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          state.ui.activeTab = btn.getAttribute('data-nav');
-          renderApp();
+          const target = btn.getAttribute('data-nav');
+          if (target === 'WALK_MODE') {
+            startWalkMode();
+          } else {
+            state.ui.activeTab = target;
+            renderApp();
+          }
         });
       });
 
@@ -3026,7 +3521,6 @@
         });
       });
 
-      // Ward Overview Edit Form
       const wdEditForm = document.getElementById('wd-edit-form');
       if (wdEditForm) {
         wdEditForm.addEventListener('submit', (e) => {
@@ -3035,12 +3529,12 @@
           if (!ward) return;
           const fd = new FormData(wdEditForm);
           const newNum = fd.get('stationNumber').trim();
-          const newLoc = fd.get('location').trim();
+          const newAddr = fd.get('address').trim();
           const newMail = fd.get('mailboxLocation').trim();
 
           const errEl = document.getElementById('wd-edit-error');
-          if (!newNum || !newLoc || !newMail) {
-            errEl.textContent = 'Stationsnummer, Standort und Postfach-Ort dürfen nicht leer sein.';
+          if (!newNum || !newAddr || !newMail) {
+            errEl.textContent = 'Stationsnummer, Adresse/Standort und Postfach-Ort dürfen nicht leer sein.';
             errEl.classList.remove('hidden');
             return;
           }
@@ -3053,16 +3547,17 @@
           }
 
           ward.stationNumber = newNum;
-          ward.wardName = fd.get('wardName').trim();
-          ward.location = newLoc;
+          ward.stationName = fd.get('stationName').trim();
+          ward.address = newAddr;
           ward.mailboxLocation = newMail;
           ward.contactName = fd.get('contactName').trim();
           ward.contactRole = fd.get('contactRole').trim();
           ward.contactInfo = fd.get('contactInfo').trim();
           ward.contactNotes = fd.get('contactNotes').trim();
           ward.notes = fd.get('notes').trim();
+          ward.updatedAt = new Date().toISOString();
 
-          saveState();
+          persistTerminalData({ markModified: true, triggerSync: true });
           showToast('Stationsdaten gespeichert.', 'success');
           renderApp();
         });
@@ -3312,7 +3807,7 @@
         btn.addEventListener('click', () => openWardDetail(btn.getAttribute('data-open-ward'), 'OVERVIEW'));
       });
 
-      // Shared Edit & Delete Visit Buttons (Ward History + Global Log)
+      // Shared Edit & Delete Visit Buttons
       document.querySelectorAll('.edit-visit-btn').forEach(btn => {
         btn.addEventListener('click', () => openEditVisitModal(btn.getAttribute('data-edit-visit')));
       });
@@ -3360,10 +3855,12 @@
                 confirmText: 'Backup wiederherstellen',
                 danger: false,
                 onConfirm: () => {
-                  state.wards = parsed.wards;
-                  state.visits = parsed.visits;
+                  const nowIso = new Date().toISOString();
+                  state.wards = parsed.wards.map(w => ({ ...w, updatedAt: w.updatedAt || nowIso }));
+                  state.visits = parsed.visits.map(v => ({ ...v, updatedAt: v.updatedAt || nowIso }));
+                  state.deletedIds = [];
                   if (parsed.settings) state.settings = { ...state.settings, ...parsed.settings };
-                  saveState();
+                  persistTerminalData({ markModified: true, triggerSync: true });
                   renderApp();
                   showToast('Backup erfolgreich wiederhergestellt.', 'success');
                 }
@@ -3376,14 +3873,92 @@
         });
       }
 
-      // SETTINGS bindings
+      // SETTINGS: Cloud Sync bindings
+      const cloudSyncForm = document.getElementById('cloud-sync-form');
+      if (cloudSyncForm) {
+        cloudSyncForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const urlVal = document.getElementById('sync-url-input').value.trim();
+          const tokenVal = document.getElementById('sync-token-input').value.trim();
+
+          if (!urlVal || !tokenVal) {
+            showToast('Bitte Web-App-URL und Sicherheitsschlüssel (SECRET_TOKEN) eingeben.', 'error');
+            return;
+          }
+          if (!urlVal.startsWith('https://')) {
+            showToast('Die Web-App-URL muss mit https:// beginnen.', 'error');
+            return;
+          }
+
+          state.syncConfig.webAppUrl = urlVal;
+          state.syncConfig.secretToken = tokenVal;
+          saveSyncConfig();
+          renderApp();
+          runCloudSync({ mode: 'BIDIRECTIONAL', showToastFeedback: true });
+        });
+      }
+
+      const toggleTokenBtn = document.getElementById('sync-toggle-token');
+      if (toggleTokenBtn) {
+        toggleTokenBtn.addEventListener('click', () => {
+          const urlIn = document.getElementById('sync-url-input');
+          const tokIn = document.getElementById('sync-token-input');
+          if (urlIn) state.syncConfig.webAppUrl = urlIn.value.trim();
+          if (tokIn) state.syncConfig.secretToken = tokIn.value.trim();
+          state.ui.showSyncToken = !state.ui.showSyncToken;
+          renderApp();
+        });
+      }
+
+      const syncNowBtn = document.getElementById('sync-now-btn');
+      if (syncNowBtn) {
+        syncNowBtn.addEventListener('click', () => {
+          runCloudSync({ mode: 'BIDIRECTIONAL', showToastFeedback: true });
+        });
+      }
+
+      const syncForcePushBtn = document.getElementById('sync-force-push-btn');
+      if (syncForcePushBtn) {
+        syncForcePushBtn.addEventListener('click', () => {
+          showConfirmModal({
+            title: 'CLOUD-DATEN ÜBERSCHREIBEN',
+            message: 'Möchten Sie den aktuellen Datenbestand dieses Geräts direkt in Google Sheets schreiben und dortige Daten überschreiben?',
+            confirmText: 'Jetzt überschreiben (Push)',
+            danger: true,
+            onConfirm: () => {
+              runCloudSync({ mode: 'FORCE_PUSH', showToastFeedback: true });
+            }
+          });
+        });
+      }
+
+      const syncDisconnectBtn = document.getElementById('sync-disconnect-btn');
+      if (syncDisconnectBtn) {
+        syncDisconnectBtn.addEventListener('click', () => {
+          showConfirmModal({
+            title: 'CLOUD SYNC TRENNEN',
+            message: 'Möchten Sie die Verbindung zu Google Sheets auf diesem Gerät trennen? Alle lokal gespeicherten Stationen und Rundgänge bleiben auf dem Gerät erhalten.',
+            confirmText: 'Sync trennen',
+            danger: true,
+            onConfirm: () => {
+              state.syncConfig = { webAppUrl: '', secretToken: '', lastSyncedAt: null };
+              localStorage.removeItem(SYNC_CONFIG_KEY);
+              setSyncRuntimeStatus('UNCONFIGURED');
+              renderApp();
+              showToast('Cloud Sync getrennt. Alle Daten bleiben lokal gespeichert.', 'info');
+            }
+          });
+        });
+      }
+
+      // SETTINGS: Terminal & Demo bindings
       const settingsForm = document.getElementById('settings-form');
       if (settingsForm) {
         settingsForm.addEventListener('submit', (e) => {
           e.preventDefault();
           state.settings.facilityName = document.getElementById('set-facility').value.trim() || 'ZKIMED FORSCHUNGSKLINIKUM';
-          state.settings.surveyTitle = document.getElementById('set-survey').value.trim() || 'BROAD CONSENT SURVEY';
-          saveState();
+          state.settings.surveyTitle = document.getElementById('set-survey').value.trim() || 'BROAD CONSENT SURVEY · LUNAR-MED';
+          persistTerminalData({ markModified: false, triggerSync: false });
           renderApp();
           showToast('Terminal-Konfiguration gespeichert.', 'success');
         });
@@ -3396,7 +3971,7 @@
           const val = input.value.trim();
           if (!val) return;
           state.settings.quickNotes.push(val);
-          saveState();
+          persistTerminalData({ markModified: false, triggerSync: false });
           renderApp();
           showToast('Schnellnotiz-Vorlage hinzugefügt.', 'success');
         });
@@ -3406,7 +3981,7 @@
         btn.addEventListener('click', () => {
           const idx = parseInt(btn.getAttribute('data-del-chip'), 10);
           state.settings.quickNotes.splice(idx, 1);
-          saveState();
+          persistTerminalData({ markModified: false, triggerSync: false });
           renderApp();
           showToast('Vorlage entfernt.', 'info');
         });
@@ -3416,15 +3991,16 @@
       if (reloadDemoBtn) {
         reloadDemoBtn.addEventListener('click', () => {
           showConfirmModal({
-            title: 'DEMODATEN WIEDERHERSTELLEN',
-            message: 'Alle aktuellen Stationen und Rundgänge werden durch die 6 ZKIMED-Demostationen ersetzt. Fortfahren?',
+            title: 'DEMODATEN LADEN',
+            message: 'Alle aktuellen Stationen und Rundgänge werden durch die 3 ZKIMED-Demostationen ersetzt. Fortfahren?',
             confirmText: 'Demodaten laden',
             danger: true,
             onConfirm: () => {
-              const demo = createDemoData();
-              state.wards = demo.wards;
-              state.visits = demo.visits;
-              saveState();
+              const sample = createInitialSampleData();
+              state.wards = sample.wards;
+              state.visits = sample.visits;
+              state.deletedIds = [];
+              persistTerminalData({ markModified: true, triggerSync: true });
               state.ui.activeTab = 'MISSION_CONTROL';
               renderApp();
               showToast('Demodaten wurden geladen.', 'success');
@@ -3442,9 +4018,11 @@
             confirmText: 'Alles löschen',
             danger: true,
             onConfirm: () => {
+              state.wards.forEach(w => { if (!state.deletedIds.includes(w.id)) state.deletedIds.push(w.id); });
+              state.visits.forEach(v => { if (!state.deletedIds.includes(v.id)) state.deletedIds.push(v.id); });
               state.wards = [];
               state.visits = [];
-              saveState();
+              persistTerminalData({ markModified: true, triggerSync: true });
               state.ui.activeTab = 'MISSION_CONTROL';
               renderApp();
               showToast('Alle Stations- und Rundgangdaten wurden gelöscht.', 'info');
@@ -3454,10 +4032,52 @@
       }
     }
 
-    // Boot terminal on DOMContentLoaded
+    /* ==========================================================================
+       12. APPLICATION BOOTSTRAP & LIFECYCLE SYNC LISTENERS
+       ========================================================================== */
     document.addEventListener('DOMContentLoaded', () => {
-      loadState();
+      loadSyncConfig();
+      loadTerminalData();
       renderApp();
+
+      // (a) Initial sync on app load if configured and online
+      if (isSyncConfigured()) {
+        if (navigator.onLine) {
+          runCloudSync({ mode: 'BIDIRECTIONAL', showToastFeedback: false });
+        } else {
+          setSyncRuntimeStatus('OFFLINE');
+        }
+      }
+
+      // (c) Browser online event when hospital Wi-Fi reconnects
+      window.addEventListener('online', () => {
+        if (isSyncConfigured()) {
+          runCloudSync({ mode: 'BIDIRECTIONAL', showToastFeedback: false });
+        }
+      });
+
+      window.addEventListener('offline', () => {
+        if (isSyncConfigured()) {
+          setSyncRuntimeStatus('OFFLINE');
+        }
+      });
+
+      // (d) Visibility / focus event when returning to the app on iPad or PC
+      const triggerResumeSync = () => {
+        if (!isSyncConfigured()) return;
+        const now = Date.now();
+        if (now - lastFocusSyncTimestamp < 5000) return;
+        lastFocusSyncTimestamp = now;
+        runCloudSync({ mode: 'BIDIRECTIONAL', showToastFeedback: false });
+      };
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          triggerResumeSync();
+        }
+      });
+
+      window.addEventListener('focus', triggerResumeSync);
     });
   </script>
 </body>
