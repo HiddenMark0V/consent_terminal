@@ -1,0 +1,3464 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>ZKIMED | CONSENT OPERATIONS — Clinical Research Terminal</title>
+
+  <!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            display: ['"Space Grotesk"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            space: {
+              bg: '#ECEEED',
+              surface: '#FAFBFB',
+              panel: '#F4F6F5',
+              metal: '#DFE3E2',
+              border: '#8A9194',
+              borderLight: '#B8BFC2',
+              graphite: '#1E2326',
+              slate: '#525B60',
+              teal: '#5A686B',
+              headerDark: '#475356',
+            },
+            zkimed: {
+              red: '#C8193B',
+              redDark: '#A3122E',
+              redLight: '#FDF2F4',
+              green: '#1E7E56',
+              greenLight: '#EDF7F2',
+              amber: '#C97A16',
+              amberLight: '#FDF6EC',
+              bluegrey: '#5B7078',
+              bluegreyLight: '#EFF3F5',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- SheetJS for real .xlsx Excel export -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       STARFIELD / LUNAR RESEARCH TERMINAL DESIGN SYSTEM
+       ========================================================================== */
+    :root {
+      --bg-primary: #ECEEED;
+      --bg-surface: #FAFBFB;
+      --bg-metal: #DFE3E2;
+      --border-main: #8A9194;
+      --border-subtle: #B8BFC2;
+      --text-primary: #1E2326;
+      --text-secondary: #525B60;
+      --text-teal: #5A686B;
+      --accent-red: #C8193B;
+      --accent-green: #1E7E56;
+      --accent-amber: #C97A16;
+      --accent-bluegrey: #5B7078;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: rgba(200, 25, 59, 0.12);
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, sans-serif;
+      /* Starfield technical dot-grid background */
+      background-image:
+        radial-gradient(#B5BCBF 1px, transparent 1px),
+        linear-gradient(to right, rgba(138, 145, 148, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(138, 145, 148, 0.06) 1px, transparent 1px);
+      background-size: 24px 24px, 96px 96px, 96px 96px;
+      background-position: 0 0, 0 0, 0 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Starfield-inspired framed module with inline top-border header */
+    .sf-module {
+      position: relative;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-main);
+      border-radius: 2px;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85), 0 2px 6px rgba(30, 35, 38, 0.04);
+    }
+
+    .sf-module-header {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.9rem;
+      border-bottom: 1px solid var(--border-subtle);
+      background: linear-gradient(180deg, #F3F5F4 0%, #E9ECEB 100%);
+    }
+
+    .sf-module-header::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 14px;
+      background-color: var(--text-teal);
+      flex-shrink: 0;
+    }
+
+    .sf-module-header.accent-red::before {
+      background-color: var(--accent-red);
+    }
+
+    .sf-module-header.accent-green::before {
+      background-color: var(--accent-green);
+    }
+
+    .sf-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--text-teal);
+    }
+
+    /* Starfield Research Lab Diagonal Hatched Stripes (Standby / Empty states) */
+    .sf-stripes {
+      background-color: #E3E7E6;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        #E4E8E7,
+        #E4E8E7 10px,
+        #D1D7D6 10px,
+        #D1D7D6 20px
+      );
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Starware-inspired vertical architectural bar accent */
+    .starware-bars {
+      display: flex;
+      gap: 3px;
+      height: 22px;
+      align-items: flex-end;
+    }
+    .starware-bars span {
+      display: block;
+      width: 4px;
+      background-color: #5A686B;
+    }
+
+    /* Corner reticle ticks for active / selected items */
+    .sf-reticle {
+      position: relative;
+    }
+    .sf-reticle::before,
+    .sf-reticle::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      pointer-events: none;
+    }
+    .sf-reticle::before {
+      top: -1px;
+      left: -1px;
+      border-top: 2px solid var(--accent-red);
+      border-left: 2px solid var(--accent-red);
+    }
+    .sf-reticle::after {
+      bottom: -1px;
+      right: -1px;
+      border-bottom: 2px solid var(--accent-red);
+      border-right: 2px solid var(--accent-red);
+    }
+
+    /* Tablet-first touch controls */
+    .touch-btn {
+      min-height: 48px;
+      border-radius: 2px;
+      transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+      user-select: none;
+    }
+    .touch-btn:active {
+      transform: translateY(1px);
+    }
+
+    .touch-input {
+      min-height: 48px;
+      border-radius: 2px;
+      border: 1px solid var(--border-main);
+      background-color: #FFFFFF;
+      color: var(--text-primary);
+      padding: 0.65rem 0.85rem;
+      font-size: 1rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .touch-input:focus {
+      outline: none;
+      border-color: var(--accent-red);
+      box-shadow: 0 0 0 2px rgba(200, 25, 59, 0.16);
+    }
+
+    /* Custom scrollbar for horizontal station strips */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Subtle pulse for live telemetry dot */
+    @keyframes telemetryPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .telemetry-dot {
+      animation: telemetryPulse 2.4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-zkimed-red selection:text-white">
+
+  <!-- MAIN APPLICATION SHELL -->
+  <div id="app" class="min-h-screen flex flex-col max-w-[1440px] mx-auto px-2 sm:px-4 md:px-6 pb-8">
+    <!-- Rendered dynamically by JS -->
+  </div>
+
+  <!-- MODAL CONTAINER (Confirmations, Edit Visit, Add Ward) -->
+  <div id="modal-root"></div>
+
+  <!-- HUD TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-root" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:w-[420px] z-50 pointer-events-none flex flex-col gap-2"></div>
+
+  <script>
+    /* ==========================================================================
+       1. CONSTANTS, STATUS DEFINITIONS & SEED DATA
+       ========================================================================== */
+    const STORAGE_KEY = 'zkimed_consent_terminal_v1';
+
+    const VISIT_STATUS = {
+      LEER: {
+        key: 'LEER',
+        label: 'Leer',
+        shortLabel: 'LEER',
+        code: 'STS-00',
+        bgClass: 'bg-zkimed-bluegreyLight',
+        textClass: 'text-zkimed-bluegrey',
+        borderClass: 'border-zkimed-bluegrey',
+        dotColor: '#5B7078'
+      },
+      BROAD_CONSENT: {
+        key: 'BROAD_CONSENT',
+        label: 'Broad Consent eingesammelt',
+        shortLabel: 'BROAD CONSENT',
+        code: 'STS-01',
+        bgClass: 'bg-zkimed-greenLight',
+        textClass: 'text-zkimed-green',
+        borderClass: 'border-zkimed-green',
+        dotColor: '#1E7E56'
+      },
+      UNINFORMIERT: {
+        key: 'UNINFORMIERT',
+        label: 'Uninformiert',
+        shortLabel: 'UNINFORMIERT',
+        code: 'STS-02',
+        bgClass: 'bg-zkimed-amberLight',
+        textClass: 'text-zkimed-amber',
+        borderClass: 'border-zkimed-amber',
+        dotColor: '#C97A16'
+      }
+    };
+
+    const DEFAULT_QUICK_NOTES = [
+      'Ansprechpartner nicht anwesend.',
+      'Postfach heute kontrolliert.',
+      'Neue Unterlagen hinterlegt.',
+      'Rückkehr am Donnerstag empfohlen.',
+      'Zwei Patienten informiert, keine Einwilligung erhalten.'
+    ];
+
+    /* ==========================================================================
+       2. DATE & UTILITY HELPERS
+       ========================================================================== */
+    function getTodayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function getOffsetDateISO(daysOffset) {
+      const d = new Date();
+      d.setDate(d.getDate() + daysOffset);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function formatDateDE(isoStr) {
+      if (!isoStr || typeof isoStr !== 'string') return '—';
+      const parts = isoStr.split('-');
+      if (parts.length !== 3) return isoStr;
+      return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+
+    function generateId(prefix = 'id') {
+      return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 7)}`;
+    }
+
+    function escapeHTML(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function createDemoData() {
+      const today = getTodayISO();
+      const yesterday = getOffsetDateISO(-1);
+      const twoDaysAgo = getOffsetDateISO(-2);
+      const fourDaysAgo = getOffsetDateISO(-4);
+
+      const wards = [
+        {
+          id: 'ward_12',
+          stationNumber: 'Station 12',
+          wardName: 'Kardiologie & Angiologie',
+          location: 'Haus A · Ebene 2 · Nordflügel',
+          mailboxLocation: 'Eingang rechts neben dem Pflegestützpunkt (Fach 12)',
+          contactName: 'Dr. med. Katrin Weber',
+          contactRole: 'Studienärztin / Oberärztin',
+          contactInfo: 'Tel. -4412 · k.weber@zkimed-klinik.de',
+          contactNotes: 'Dienstags und donnerstags ab 11:30 Uhr nach der Visite gut erreichbar.',
+          notes: 'Beste Besuchszeit zwischen 11:00 und 13:30 Uhr. Aufklärungsbögen im blauen Ordner am Stützpunkt nachfüllen.'
+        },
+        {
+          id: 'ward_14a',
+          stationNumber: 'Station 14A',
+          wardName: 'Neurologie & Stroke Unit',
+          location: 'Haus A · Ebene 4 · Südflügel',
+          mailboxLocation: 'Raum 4.14 · Ablagefach hinter dem Stationssekretariat',
+          contactName: 'Thomas Berger',
+          contactRole: 'Stationsleitung Pflege',
+          contactInfo: 'Tel. -4820',
+          contactNotes: 'Sehr kooperativ, sammelt unterschriebene Bögen direkt im Sekretariat.',
+          notes: 'Zugang zur Stroke Unit nur nach kurzer Anmeldung am Empfang. Hygienevorschriften beachten.'
+        },
+        {
+          id: 'ward_21',
+          stationNumber: 'Station 21',
+          wardName: 'Onkologie & Hämatologie',
+          location: 'Haus B · Ebene 1 · Osttrakt',
+          mailboxLocation: 'Empfangstresen · Verschlossenes Forschungsfach B1',
+          contactName: 'OA Dr. Markus Lindner',
+          contactRole: 'Forschungskoordinator Onkologie',
+          contactInfo: 'Tel. -5109 · m.lindner@zkimed-klinik.de',
+          contactNotes: 'Preferiert kurze Übergabe am frühen Nachmittag.',
+          notes: 'Hohe Teilnahmebereitschaft bei ambulanten und stationären Patienten. Immer 15 Ersatz-Kits mitführen.'
+        },
+        {
+          id: 'ward_04',
+          stationNumber: 'Station 04',
+          wardName: 'Allgemein- & Viszeralchirurgie',
+          location: 'Zentralbau · Erdgeschoss · Sektor C',
+          mailboxLocation: 'Flur C · Wandpostfach gegenüber Arztzimmer 0.08',
+          contactName: 'Sabine Hoffmann',
+          contactRole: 'Case Managerin',
+          contactInfo: 'Tel. -3204',
+          contactNotes: 'Mittwochs ab 14:00 Uhr nicht im Haus.',
+          notes: 'Vormittags oft OP-Vorbereitungen; präoperative Patienten am besten am Nachmittag besuchen.'
+        },
+        {
+          id: 'ward_18',
+          stationNumber: 'Station 18',
+          wardName: 'Pneumologie & Beatmungsmedizin',
+          location: 'Haus B · Ebene 3 · Westflügel',
+          mailboxLocation: 'Stationszimmer 3.22 · Hängeregister "Studien"',
+          contactName: 'Dr. med. Lukas Reimann',
+          contactRole: 'Assistenzarzt',
+          contactInfo: 'Tel. -5318',
+          contactNotes: 'Bittet um kurze Info per Telefon vor Eintreffen.',
+          notes: 'Isolationszimmer am Flurende beachten. Schutzkleidung liegt vor Zimmer 3.28 bereit.'
+        },
+        {
+          id: 'ward_07',
+          stationNumber: 'Station 07',
+          wardName: 'Nephrologie & Dialyse',
+          location: 'Haus C · Ebene 1 · Süd',
+          mailboxLocation: 'Anmeldung Dialyse · Ablagekorb rot',
+          contactName: 'Miriam Scholz',
+          contactRole: 'Leitende Dialyse-Fachkraft',
+          contactInfo: 'Tel. -6107',
+          contactNotes: 'Vormittagsschicht bis 13:00 Uhr.',
+          notes: 'Patienten während der Dialyse ruhig ansprechbar, ausreichend Zeit für Fragen einplanen.'
+        }
+      ];
+
+      const visits = [
+        {
+          id: 'vis_01',
+          wardId: 'ward_12',
+          date: fourDaysAgo,
+          status: 'BROAD_CONSENT',
+          consentCount: 3,
+          note: 'Ansprechpartner anwesend, 3 unterschriebene Einwilligungen aus Postfach entnommen.',
+          createdAt: Date.now() - 345600000
+        },
+        {
+          id: 'vis_02',
+          wardId: 'ward_12',
+          date: today,
+          status: 'BROAD_CONSENT',
+          consentCount: 4,
+          note: 'Postfach heute kontrolliert. Neue Unterlagen hinterlegt.',
+          createdAt: Date.now() - 7200000
+        },
+        {
+          id: 'vis_03',
+          wardId: 'ward_14a',
+          date: twoDaysAgo,
+          status: 'UNINFORMIERT',
+          consentCount: 0,
+          note: 'Zwei Patienten informiert, keine Einwilligung erhalten.',
+          createdAt: Date.now() - 172800000
+        },
+        {
+          id: 'vis_04',
+          wardId: 'ward_14a',
+          date: today,
+          status: 'BROAD_CONSENT',
+          consentCount: 2,
+          note: 'Rücksprache mit Thomas Berger erfolgreich.',
+          createdAt: Date.now() - 5400000
+        },
+        {
+          id: 'vis_05',
+          wardId: 'ward_21',
+          date: yesterday,
+          status: 'BROAD_CONSENT',
+          consentCount: 5,
+          note: 'Sehr guter Rücklauf auf Station 21, neue Aufklärungsbögen hinterlegt.',
+          createdAt: Date.now() - 86400000
+        },
+        {
+          id: 'vis_06',
+          wardId: 'ward_04',
+          date: yesterday,
+          status: 'LEER',
+          consentCount: 0,
+          note: 'Postfach heute kontrolliert. Ansprechpartner nicht anwesend.',
+          createdAt: Date.now() - 82800000
+        }
+        // Station 18 and Station 07 intentionally have 0 visits so "NOCH NICHT BESUCHT" is demonstrable right away
+      ];
+
+      return {
+        wards,
+        visits,
+        settings: {
+          surveyTitle: 'BROAD CONSENT SURVEY · LUNAR-MED',
+          facilityName: 'ZKIMED FORSCHUNGSKLINIKUM',
+          quickNotes: [...DEFAULT_QUICK_NOTES]
+        }
+      };
+    }
+
+    /* ==========================================================================
+       3. APPLICATION STATE & OFFLINE-FIRST STORAGE ENGINE
+       ========================================================================== */
+    const state = {
+      wards: [],
+      visits: [],
+      settings: {
+        surveyTitle: 'BROAD CONSENT SURVEY · LUNAR-MED',
+        facilityName: 'ZKIMED FORSCHUNGSKLINIKUM',
+        quickNotes: [...DEFAULT_QUICK_NOTES]
+      },
+      ui: {
+        activeTab: 'MISSION_CONTROL', // MISSION_CONTROL | STATIONS | WARD_DETAIL | WALK_MODE | RUNDGAENGE | EXPORT | SETTINGS
+        selectedWardId: null,
+        wardDetailTab: 'OVERVIEW', // OVERVIEW | HISTORY | QUICK_ENTRY
+        // Quick Entry draft state
+        qeDate: getTodayISO(),
+        qeStatus: 'BROAD_CONSENT',
+        qeCount: 1,
+        qeNote: '',
+        // Walk Mode state
+        walkWardId: null,
+        walkDate: getTodayISO(),
+        walkStatus: 'BROAD_CONSENT',
+        walkCount: 1,
+        walkNote: '',
+        // Stations directory filters & sort
+        stationSearch: '',
+        stationFilter: 'ALL', // ALL | UNVISITED | VISITED_TODAY
+        stationSortBy: 'NUMBER', // NUMBER | LAST_VISIT
+        stationSortDir: 'ASC', // ASC | DESC
+        // Global Rundgänge log filters
+        logDateFilter: '',
+        logStationFilter: 'ALL',
+        logStatusFilter: 'ALL',
+        logSearch: '',
+        // Export state
+        exportDate: getTodayISO(),
+        // Save indicator timestamp
+        lastSavedTime: null
+      }
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          const demo = createDemoData();
+          state.wards = demo.wards;
+          state.visits = demo.visits;
+          state.settings = demo.settings;
+          saveState(false);
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        state.wards = Array.isArray(parsed.wards) ? parsed.wards : [];
+        state.visits = Array.isArray(parsed.visits) ? parsed.visits : [];
+        if (parsed.settings) {
+          state.settings = {
+            surveyTitle: parsed.settings.surveyTitle || 'BROAD CONSENT SURVEY · LUNAR-MED',
+            facilityName: parsed.settings.facilityName || 'ZKIMED FORSCHUNGSKLINIKUM',
+            quickNotes: Array.isArray(parsed.settings.quickNotes) && parsed.settings.quickNotes.length > 0
+              ? parsed.settings.quickNotes
+              : [...DEFAULT_QUICK_NOTES]
+          };
+        }
+      } catch (err) {
+        console.error('Fehler beim Laden aus localStorage:', err);
+        const demo = createDemoData();
+        state.wards = demo.wards;
+        state.visits = demo.visits;
+        state.settings = demo.settings;
+      }
+    }
+
+    function saveState(updateBadge = true) {
+      try {
+        const payload = {
+          version: 1,
+          updatedAt: new Date().toISOString(),
+          wards: state.wards,
+          visits: state.visits,
+          settings: state.settings
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        const now = new Date();
+        state.ui.lastSavedTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        if (updateBadge) {
+          const badgeEl = document.getElementById('hud-save-indicator');
+          if (badgeEl) {
+            badgeEl.textContent = `GESPEICHERT · ${state.ui.lastSavedTime}`;
+            badgeEl.classList.add('text-zkimed-green');
+            setTimeout(() => badgeEl.classList.remove('text-zkimed-green'), 1400);
+          }
+        }
+      } catch (err) {
+        console.error('Fehler beim Speichern:', err);
+        showToast('Speicherfehler im Browser-Speicher!', 'error');
+      }
+    }
+
+    /* ==========================================================================
+       4. COMPUTED METRICS & SELECTORS
+       ========================================================================== */
+    function getSortedWardsList() {
+      return [...state.wards].sort((a, b) =>
+        a.stationNumber.localeCompare(b.stationNumber, 'de', { numeric: true, sensitivity: 'base' })
+      );
+    }
+
+    function getWardVisits(wardId) {
+      return state.visits
+        .filter(v => v.wardId === wardId)
+        .sort((a, b) => {
+          if (b.date !== a.date) return b.date.localeCompare(a.date);
+          return (b.createdAt || 0) - (a.createdAt || 0);
+        });
+    }
+
+    function getWardStats(wardId) {
+      const wVisits = getWardVisits(wardId);
+      const today = getTodayISO();
+      const totalConsents = wVisits.reduce((sum, v) => sum + (v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0), 0);
+      const latestVisit = wVisits.length > 0 ? wVisits[0] : null;
+      const visitedToday = wVisits.some(v => v.date === today);
+      return {
+        visitCount: wVisits.length,
+        totalConsents,
+        latestVisit,
+        visitedToday
+      };
+    }
+
+    function getGlobalStats() {
+      const today = getTodayISO();
+      const totalWards = state.wards.length;
+      const visitedTodayWardIds = new Set(
+        state.visits.filter(v => v.date === today).map(v => v.wardId)
+      );
+      // Only count wards that still exist
+      const existingWardIds = new Set(state.wards.map(w => w.id));
+      const visitedTodayCount = [...visitedTodayWardIds].filter(id => existingWardIds.has(id)).length;
+
+      const everVisitedWardIds = new Set(
+        state.visits.map(v => v.wardId).filter(id => existingWardIds.has(id))
+      );
+      const unvisitedWardsCount = Math.max(0, totalWards - everVisitedWardIds.size);
+
+      const totalConsents = state.visits.reduce(
+        (sum, v) => sum + (v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0),
+        0
+      );
+
+      const todayConsents = state.visits
+        .filter(v => v.date === today)
+        .reduce((sum, v) => sum + (v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0), 0);
+
+      const statusBreakdown = {
+        BROAD_CONSENT: state.visits.filter(v => v.status === 'BROAD_CONSENT').length,
+        LEER: state.visits.filter(v => v.status === 'LEER').length,
+        UNINFORMIERT: state.visits.filter(v => v.status === 'UNINFORMIERT').length
+      };
+
+      return {
+        totalWards,
+        visitedTodayCount,
+        everVisitedCount: everVisitedWardIds.size,
+        unvisitedWardsCount,
+        totalConsents,
+        todayConsents,
+        totalVisits: state.visits.length,
+        statusBreakdown
+      };
+    }
+
+    /* ==========================================================================
+       5. ZKIMED EMBLEM SVG & GEOMETRIC ICONS
+       ========================================================================== */
+    function renderZkimedLogoSVG(sizeClass = 'w-14 h-14') {
+      return `
+        <svg viewBox="0 0 220 225" class="${sizeClass} shrink-0 select-none" aria-label="ZKIMED Emblem">
+          <defs>
+            <!-- Left half clip for anatomical brain -->
+            <clipPath id="zkimed-left-hemisphere">
+              <rect x="0" y="0" width="109" height="190" />
+            </clipPath>
+            <!-- Right half clip for lunar hemisphere -->
+            <clipPath id="zkimed-right-hemisphere">
+              <rect x="111" y="0" width="109" height="190" />
+            </clipPath>
+            <!-- Gold metallic gradient for Caduceus -->
+            <linearGradient id="zkimed-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#F2D675" />
+              <stop offset="45%" stop-color="#D4AF37" />
+              <stop offset="100%" stop-color="#A67C1E" />
+            </linearGradient>
+            <!-- Curved text path along bottom -->
+            <path id="zkimed-text-arc" d="M 34,166 A 84,84 0 0,0 186,166" />
+          </defs>
+
+          <!-- Subtle outer technical ring -->
+          <circle cx="110" cy="96" r="78" fill="#5A6165" opacity="0.14" />
+
+          <!-- LEFT HEMISPHERE: Crimson Anatomical Brain -->
+          <g clip-path="url(#zkimed-left-hemisphere)">
+            <path d="M 108,22
+                     C 84,22 65,33 54,51
+                     C 43,66 38,84 40,104
+                     C 41,122 50,139 64,151
+                     C 77,162 93,168 108,168 Z"
+                  fill="#D91B42" />
+            <!-- Anatomical brain sulci & gyri folds -->
+            <g fill="none" stroke="#4D5256" stroke-width="2.6" stroke-linecap="round">
+              <path d="M 106,36 C 90,35 79,43 76,53" />
+              <path d="M 96,49 C 80,48 67,56 62,69" />
+              <path d="M 105,63 C 88,61 73,68 67,81" />
+              <path d="M 88,75 C 70,74 54,82 48,96" />
+              <path d="M 105,89 C 86,88 71,94 64,106" />
+              <path d="M 92,104 C 73,103 57,110 51,123" />
+              <path d="M 105,118 C 87,118 73,125 68,137" />
+              <path d="M 98,136 C 84,137 74,144 71,153" />
+              <path d="M 65,45 C 58,54 55,64 56,74" />
+              <path d="M 52,82 C 47,93 47,105 51,115" />
+            </g>
+          </g>
+
+          <!-- RIGHT HEMISPHERE: Pearl-Silver Lunar Surface -->
+          <g clip-path="url(#zkimed-right-hemisphere)">
+            <circle cx="110" cy="95" r="73" fill="#E8E9EB" stroke="#B8BCBF" stroke-width="1" />
+            <!-- Lunar Maria & Craters -->
+            <path d="M 118,34 C 134,36 146,47 144,61 C 142,73 128,77 119,70 Z" fill="#C4C8CC" opacity="0.7" />
+            <path d="M 148,54 C 163,58 173,74 169,92 C 165,107 151,111 142,99 C 136,90 139,65 148,54 Z" fill="#B8BDC2" opacity="0.75" />
+            <path d="M 122,92 C 136,91 146,104 142,119 C 138,132 124,135 117,124 Z" fill="#C7CBCE" opacity="0.65" />
+            <circle cx="155" cy="126" r="10" fill="#BFC3C7" opacity="0.75" />
+            <circle cx="155" cy="126" r="6" fill="#DFE1E3" />
+            <circle cx="131" cy="147" r="7" fill="#B8BDC2" opacity="0.8" />
+            <circle cx="166" cy="104" r="5" fill="#AEB3B8" opacity="0.7" />
+            <circle cx="134" cy="48" r="4.5" fill="#F7F8F9" />
+          </g>
+
+          <!-- CENTRAL CADUCEUS STAFF (Metallic Gold) -->
+          <g stroke="#474B4E" stroke-width="1.3" stroke-linejoin="round">
+            <!-- Central vertical rod -->
+            <path d="M 108,43 L 112,43 L 111.3,194 L 110,204 L 108.7,194 Z" fill="url(#zkimed-gold)" />
+            <!-- Top sphere finial -->
+            <circle cx="110" cy="37" r="6.5" fill="url(#zkimed-gold)" />
+            <!-- Left Wing -->
+            <path d="M 105,49 C 89,40 67,41 51,48 C 60,55 72,58 84,58 C 72,61 63,62 58,62 C 72,68 89,67 105,60 Z"
+                  fill="url(#zkimed-gold)" />
+            <!-- Right Wing -->
+            <path d="M 115,49 C 131,40 153,41 169,48 C 160,55 148,58 136,58 C 148,61 157,62 162,62 C 148,68 131,67 115,60 Z"
+                  fill="url(#zkimed-gold)" />
+            <!-- Intertwined Serpents -->
+            <path d="M 103,63 C 92,66 90,77 101,83 C 115,90 126,97 123,108 C 120,117 102,121 97,130 C 93,137 101,145 113,150 C 120,153 121,160 113,164"
+                  fill="none" stroke="url(#zkimed-gold)" stroke-width="4.4" stroke-linecap="round" />
+            <path d="M 117,63 C 128,66 130,77 119,83 C 105,90 94,97 97,108 C 100,117 118,121 123,130 C 127,137 119,145 107,150 C 100,153 99,160 107,164"
+                  fill="none" stroke="url(#zkimed-gold)" stroke-width="4.4" stroke-linecap="round" />
+          </g>
+
+          <!-- CURVED ZKIMED BRAND LETTERING -->
+          <text fill="#C8193B" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="25" letter-spacing="5.5">
+            <textPath href="#zkimed-text-arc" startOffset="50%" text-anchor="middle">ZKIMED</textPath>
+          </text>
+        </svg>
+      `;
+    }
+
+    const ICONS = {
+      radar: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>`,
+      wards: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M9 9v11"/></svg>`,
+      history: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>`,
+      export: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg>`,
+      settings: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+      walk: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+      mailbox: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>`,
+      plus: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+      check: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
+      edit: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+      trash: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+      search: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+      user: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+      pin: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`
+    };
+
+    /* ==========================================================================
+       6. TOAST & CUSTOM MODAL DIALOGS (NO NATIVE ALERT / CONFIRM)
+       ========================================================================== */
+    let toastCounter = 0;
+
+    function showToast(message, type = 'success', undoCallback = null) {
+      const root = document.getElementById('toast-root');
+      if (!root) return;
+      const id = `toast_${++toastCounter}`;
+
+      const borderMap = {
+        success: 'border-zkimed-green bg-space-surface',
+        error: 'border-zkimed-red bg-zkimed-redLight',
+        info: 'border-space-teal bg-space-surface'
+      };
+      const barMap = {
+        success: 'bg-zkimed-green',
+        error: 'bg-zkimed-red',
+        info: 'bg-space-teal'
+      };
+
+      const el = document.createElement('div');
+      el.id = id;
+      el.className = `pointer-events-auto border ${borderMap[type] || borderMap.info} shadow-lg rounded-[2px] overflow-hidden flex items-stretch transition-all duration-200`;
+      el.innerHTML = `
+        <div class="w-1.5 ${barMap[type] || barMap.info} shrink-0"></div>
+        <div class="p-3.5 flex-1 flex items-center justify-between gap-3">
+          <div class="text-sm font-medium text-space-graphite">${escapeHTML(message)}</div>
+          ${undoCallback ? `<button id="${id}_undo" class="px-3 py-1.5 bg-space-graphite text-white font-display text-xs font-bold uppercase tracking-wider rounded-[2px] hover:bg-zkimed-red shrink-0">Rückgängig</button>` : ''}
+        </div>
+      `;
+
+      root.appendChild(el);
+
+      if (undoCallback) {
+        const undoBtn = document.getElementById(`${id}_undo`);
+        if (undoBtn) {
+          undoBtn.addEventListener('click', () => {
+            undoCallback();
+            el.remove();
+          });
+        }
+      }
+
+      setTimeout(() => {
+        if (el && el.parentNode) {
+          el.style.opacity = '0';
+          setTimeout(() => el.remove(), 200);
+        }
+      }, undoCallback ? 6000 : 3200);
+    }
+
+    function closeModal() {
+      const root = document.getElementById('modal-root');
+      if (root) root.innerHTML = '';
+    }
+
+    function showConfirmModal({ title, message, confirmText = 'Bestätigen', danger = true, onConfirm }) {
+      const root = document.getElementById('modal-root');
+      root.innerHTML = `
+        <div class="fixed inset-0 z-50 bg-space-graphite/60 backdrop-blur-[1px] flex items-center justify-center p-4" id="modal-backdrop">
+          <div class="sf-module w-full max-w-md bg-space-surface shadow-2xl">
+            <div class="sf-module-header ${danger ? 'accent-red' : ''}">
+              <span class="sf-label">${escapeHTML(title)}</span>
+            </div>
+            <div class="p-5 sm:p-6">
+              <p class="text-base text-space-graphite leading-relaxed mb-6">${escapeHTML(message)}</p>
+              <div class="flex flex-col-reverse sm:flex-row justify-end gap-3">
+                <button type="button" id="modal-cancel-btn" class="touch-btn px-5 py-3 border border-space-border bg-white text-space-graphite font-semibold text-sm hover:bg-space-metal">
+                  Abbrechen
+                </button>
+                <button type="button" id="modal-confirm-btn" class="touch-btn px-5 py-3 ${danger ? 'bg-zkimed-red hover:bg-zkimed-redDark' : 'bg-space-graphite hover:bg-space-teal'} text-white font-semibold text-sm">
+                  ${escapeHTML(confirmText)}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);
+      document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+        if (e.target.id === 'modal-backdrop') closeModal();
+      });
+      document.getElementById('modal-confirm-btn').addEventListener('click', () => {
+        closeModal();
+        if (typeof onConfirm === 'function') onConfirm();
+      });
+    }
+
+    function openAddWardModal() {
+      const root = document.getElementById('modal-root');
+      root.innerHTML = `
+        <div class="fixed inset-0 z-50 bg-space-graphite/60 backdrop-blur-[1px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto" id="modal-backdrop">
+          <div class="sf-module w-full max-w-2xl bg-space-surface shadow-2xl my-auto">
+            <div class="sf-module-header accent-red justify-between">
+              <span class="sf-label">NEUE STATION REGISTRIEREN · WARD REGISTRATION</span>
+              <button type="button" id="modal-close-x" class="px-2.5 py-1 text-xs font-mono font-bold border border-space-border bg-white hover:bg-space-metal">ESC / ✕</button>
+            </div>
+            <form id="add-ward-form" class="p-4 sm:p-6 space-y-4">
+              <div id="add-ward-error" class="hidden p-3 bg-zkimed-redLight border border-zkimed-red text-zkimed-red text-sm font-medium"></div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                    Stationsnummer *
+                  </label>
+                  <input type="text" name="stationNumber" required placeholder="z.B. Station 15" class="touch-input w-full font-mono" />
+                </div>
+                <div>
+                  <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                    Stationsname / Fachbereich
+                  </label>
+                  <input type="text" name="wardName" placeholder="z.B. Innere Medizin II" class="touch-input w-full" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                    Standort / Adresse im Klinikum *
+                  </label>
+                  <input type="text" name="location" required placeholder="z.B. Haus A · Ebene 3 · Ostflügel" class="touch-input w-full" />
+                </div>
+                <div>
+                  <label class="block font-display text-xs font-bold uppercase tracking-wider text-zkimed-red mb-1.5">
+                    Postfach-Ort (Wichtig für Rundgänge) *
+                  </label>
+                  <input type="text" name="mailboxLocation" required placeholder="z.B. Eingang neben Pflegestützpunkt" class="touch-input w-full" />
+                </div>
+              </div>
+
+              <div class="border-t border-space-borderLight pt-4">
+                <div class="font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-3">Ansprechpartner & Kontakt</div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label class="block text-xs font-semibold text-space-slate mb-1">Name Ansprechpartner</label>
+                    <input type="text" name="contactName" placeholder="z.B. Dr. M. Weber" class="touch-input w-full" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-space-slate mb-1">Rolle / Position</label>
+                    <input type="text" name="contactRole" placeholder="z.B. Stationsleitung" class="touch-input w-full" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-space-slate mb-1">Kontaktdaten (Tel./Mail)</label>
+                    <input type="text" name="contactInfo" placeholder="z.B. Tel. -4510" class="touch-input w-full" />
+                  </div>
+                </div>
+                <div class="mt-3">
+                  <label class="block text-xs font-semibold text-space-slate mb-1">Notizen zum Ansprechpartner</label>
+                  <input type="text" name="contactNotes" placeholder="z.B. Erreichbar Mo–Fr 10:00–14:00 Uhr" class="touch-input w-full" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                  Allgemeine Stationsanmerkungen
+                </label>
+                <textarea name="notes" rows="2" placeholder="Beste Besuchszeit, Zugangsbeschränkungen, Besonderheiten..." class="touch-input w-full"></textarea>
+              </div>
+
+              <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2 border-t border-space-borderLight">
+                <button type="button" id="add-ward-cancel" class="touch-btn px-5 py-3 border border-space-border bg-white text-space-graphite font-semibold text-sm hover:bg-space-metal">
+                  Abbrechen
+                </button>
+                <button type="submit" class="touch-btn px-6 py-3 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-sm">
+                  Station speichern
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('modal-close-x').addEventListener('click', closeModal);
+      document.getElementById('add-ward-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+        if (e.target.id === 'modal-backdrop') closeModal();
+      });
+
+      document.getElementById('add-ward-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const stationNumber = fd.get('stationNumber').trim();
+        const wardName = fd.get('wardName').trim();
+        const location = fd.get('location').trim();
+        const mailboxLocation = fd.get('mailboxLocation').trim();
+
+        const errorBox = document.getElementById('add-ward-error');
+        if (!stationNumber || !location || !mailboxLocation) {
+          errorBox.textContent = 'Bitte Stationsnummer, Standort und Postfach-Ort ausfüllen.';
+          errorBox.classList.remove('hidden');
+          return;
+        }
+
+        // Duplicate prevention check
+        const duplicate = state.wards.some(
+          w => w.stationNumber.trim().toLowerCase() === stationNumber.toLowerCase()
+        );
+        if (duplicate) {
+          errorBox.textContent = `Duplikat erkannt: "${stationNumber}" ist bereits registriert.`;
+          errorBox.classList.remove('hidden');
+          return;
+        }
+
+        const newWard = {
+          id: generateId('ward'),
+          stationNumber,
+          wardName,
+          location,
+          mailboxLocation,
+          contactName: fd.get('contactName').trim(),
+          contactRole: fd.get('contactRole').trim(),
+          contactInfo: fd.get('contactInfo').trim(),
+          contactNotes: fd.get('contactNotes').trim(),
+          notes: fd.get('notes').trim()
+        };
+
+        state.wards.push(newWard);
+        saveState();
+        closeModal();
+        showToast(`${stationNumber} erfolgreich registriert.`, 'success');
+        openWardDetail(newWard.id, 'OVERVIEW');
+      });
+    }
+
+    function openEditVisitModal(visitId) {
+      const visit = state.visits.find(v => v.id === visitId);
+      if (!visit) return;
+      const ward = state.wards.find(w => w.id === visit.wardId);
+
+      let editStatus = visit.status;
+      let editCount = Number(visit.consentCount) || 0;
+
+      const root = document.getElementById('modal-root');
+      root.innerHTML = `
+        <div class="fixed inset-0 z-50 bg-space-graphite/60 backdrop-blur-[1px] flex items-center justify-center p-3 sm:p-4 overflow-y-auto" id="modal-backdrop">
+          <div class="sf-module w-full max-w-xl bg-space-surface shadow-2xl my-auto">
+            <div class="sf-module-header justify-between">
+              <span class="sf-label">RUNDGANG BEARBEITEN · ${escapeHTML(ward ? ward.stationNumber : '')}</span>
+              <button type="button" id="modal-close-x" class="px-2.5 py-1 text-xs font-mono font-bold border border-space-border bg-white hover:bg-space-metal">✕</button>
+            </div>
+            <form id="edit-visit-form" class="p-5 space-y-5">
+              <div>
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">Datum des Rundgangs</label>
+                <input type="date" id="ev-date" value="${escapeHTML(visit.date)}" required class="touch-input w-full font-mono text-base" />
+              </div>
+
+              <div>
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-2">Consent Status</label>
+                <div class="grid grid-cols-1 gap-2.5" id="ev-status-group">
+                  ${Object.values(VISIT_STATUS).map(st => `
+                    <button type="button" data-status="${st.key}" class="ev-status-btn touch-btn px-4 py-3 border text-left font-semibold flex items-center justify-between ${editStatus === st.key ? 'border-space-graphite bg-space-graphite text-white' : 'border-space-border bg-white text-space-graphite hover:bg-space-panel'}">
+                      <span>${escapeHTML(st.label)}</span>
+                      <span class="font-mono text-xs opacity-75">${st.code}</span>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <div id="ev-count-wrapper" class="${editStatus === 'BROAD_CONSENT' ? '' : 'hidden'} p-4 bg-zkimed-greenLight border border-zkimed-green">
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-zkimed-green mb-2">Anzahl eingesammelter Broad Consents</label>
+                <div class="flex items-center gap-3">
+                  <button type="button" id="ev-dec" class="touch-btn w-14 h-14 bg-white border border-zkimed-green text-zkimed-green font-mono text-2xl font-bold flex items-center justify-center">−</button>
+                  <input type="number" id="ev-count" min="0" inputmode="numeric" value="${editCount}" class="touch-input flex-1 text-center font-mono text-2xl font-bold h-14" />
+                  <button type="button" id="ev-inc" class="touch-btn w-14 h-14 bg-zkimed-green text-white font-mono text-2xl font-bold flex items-center justify-center">+</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">Rundgangsnotiz</label>
+                <textarea id="ev-note" rows="2" class="touch-input w-full" placeholder="Optionale Notiz...">${escapeHTML(visit.note || '')}</textarea>
+              </div>
+
+              <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2 border-t border-space-borderLight">
+                <button type="button" id="ev-cancel" class="touch-btn px-5 py-3 border border-space-border bg-white text-space-graphite font-semibold text-sm">Abbrechen</button>
+                <button type="submit" class="touch-btn px-6 py-3 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-sm">Änderungen speichern</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+
+      const updateModalStatusUI = () => {
+        document.querySelectorAll('.ev-status-btn').forEach(btn => {
+          const isSelected = btn.getAttribute('data-status') === editStatus;
+          btn.className = `ev-status-btn touch-btn px-4 py-3 border text-left font-semibold flex items-center justify-between ${isSelected ? 'border-space-graphite bg-space-graphite text-white' : 'border-space-border bg-white text-space-graphite hover:bg-space-panel'}`;
+        });
+        const countWrap = document.getElementById('ev-count-wrapper');
+        if (editStatus === 'BROAD_CONSENT') {
+          countWrap.classList.remove('hidden');
+          if (editCount === 0) {
+            editCount = 1;
+            document.getElementById('ev-count').value = 1;
+          }
+        } else {
+          countWrap.classList.add('hidden');
+        }
+      };
+
+      document.querySelectorAll('.ev-status-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          editStatus = btn.getAttribute('data-status');
+          updateModalStatusUI();
+        });
+      });
+
+      document.getElementById('ev-dec').addEventListener('click', () => {
+        const input = document.getElementById('ev-count');
+        editCount = Math.max(0, (parseInt(input.value, 10) || 0) - 1);
+        input.value = editCount;
+      });
+      document.getElementById('ev-inc').addEventListener('click', () => {
+        const input = document.getElementById('ev-count');
+        editCount = (parseInt(input.value, 10) || 0) + 1;
+        input.value = editCount;
+      });
+
+      document.getElementById('modal-close-x').addEventListener('click', closeModal);
+      document.getElementById('ev-cancel').addEventListener('click', closeModal);
+      document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+        if (e.target.id === 'modal-backdrop') closeModal();
+      });
+
+      document.getElementById('edit-visit-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newDate = document.getElementById('ev-date').value || getTodayISO();
+        const rawCount = parseInt(document.getElementById('ev-count').value, 10) || 0;
+        const newNote = document.getElementById('ev-note').value.trim();
+
+        visit.date = newDate;
+        visit.status = editStatus;
+        visit.consentCount = editStatus === 'BROAD_CONSENT' ? Math.max(0, rawCount) : 0;
+        visit.note = newNote;
+
+        saveState();
+        closeModal();
+        showToast('Rundgang-Eintrag aktualisiert.', 'success');
+        renderApp();
+      });
+    }
+
+    /* ==========================================================================
+       7. CORE CRUD ACTIONS (WARDS & VISITS)
+       ========================================================================== */
+    function addVisitRecord({ wardId, date, status, consentCount, note }) {
+      const normalizedCount = status === 'BROAD_CONSENT' ? Math.max(0, parseInt(consentCount, 10) || 0) : 0;
+      const newVisit = {
+        id: generateId('vis'),
+        wardId,
+        date: date || getTodayISO(),
+        status,
+        consentCount: normalizedCount,
+        note: (note || '').trim(),
+        createdAt: Date.now()
+      };
+      state.visits.push(newVisit);
+      saveState();
+      return newVisit;
+    }
+
+    function deleteVisitWithUndo(visitId) {
+      const idx = state.visits.findIndex(v => v.id === visitId);
+      if (idx === -1) return;
+      const deletedCopy = { ...state.visits[idx] };
+      const ward = state.wards.find(w => w.id === deletedCopy.wardId);
+
+      showConfirmModal({
+        title: 'RUNDGANG LÖSCHEN',
+        message: `Möchten Sie den Rundgang-Eintrag vom ${formatDateDE(deletedCopy.date)} (${ward ? ward.stationNumber : 'Station'}) wirklich löschen?`,
+        confirmText: 'Eintrag löschen',
+        danger: true,
+        onConfirm: () => {
+          state.visits = state.visits.filter(v => v.id !== visitId);
+          saveState();
+          renderApp();
+          showToast(
+            `Rundgang vom ${formatDateDE(deletedCopy.date)} gelöscht.`,
+            'info',
+            () => {
+              state.visits.push(deletedCopy);
+              saveState();
+              renderApp();
+              showToast('Eintrag wiederhergestellt.', 'success');
+            }
+          );
+        }
+      });
+    }
+
+    function deleteWardWithConfirm(wardId) {
+      const ward = state.wards.find(w => w.id === wardId);
+      if (!ward) return;
+      const wardVisitCount = state.visits.filter(v => v.wardId === wardId).length;
+
+      showConfirmModal({
+        title: 'STATION ENTFERNEN',
+        message: `Möchten Sie "${ward.stationNumber}" inklusive ${wardVisitCount} gespeicherter Rundgänge unwiderruflich löschen?`,
+        confirmText: 'Station löschen',
+        danger: true,
+        onConfirm: () => {
+          state.wards = state.wards.filter(w => w.id !== wardId);
+          state.visits = state.visits.filter(v => v.wardId !== wardId);
+          saveState();
+          state.ui.activeTab = 'STATIONS';
+          state.ui.selectedWardId = null;
+          renderApp();
+          showToast(`${ward.stationNumber} wurde gelöscht.`, 'info');
+        }
+      });
+    }
+
+    function openWardDetail(wardId, tab = 'OVERVIEW') {
+      state.ui.selectedWardId = wardId;
+      state.ui.wardDetailTab = tab;
+      state.ui.activeTab = 'WARD_DETAIL';
+      if (tab === 'QUICK_ENTRY') {
+        state.ui.qeDate = getTodayISO();
+        state.ui.qeStatus = 'BROAD_CONSENT';
+        state.ui.qeCount = 1;
+        state.ui.qeNote = '';
+      }
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startWalkMode(specificWardId = null) {
+      const sorted = getSortedWardsList();
+      if (sorted.length === 0) {
+        showToast('Keine Stationen vorhanden. Bitte zuerst eine Station anlegen.', 'error');
+        openAddWardModal();
+        return;
+      }
+      const today = getTodayISO();
+      let targetWard = null;
+      if (specificWardId) {
+        targetWard = sorted.find(w => w.id === specificWardId);
+      }
+      if (!targetWard) {
+        // Default to first ward not yet visited today, or the first ward overall
+        targetWard = sorted.find(w => !state.visits.some(v => v.wardId === w.id && v.date === today)) || sorted[0];
+      }
+      state.ui.walkWardId = targetWard.id;
+      state.ui.walkDate = today;
+      state.ui.walkStatus = 'BROAD_CONSENT';
+      state.ui.walkCount = 1;
+      state.ui.walkNote = '';
+      state.ui.activeTab = 'WALK_MODE';
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================================================
+       8. REAL .XLSX EXCEL EXPORT & JSON BACKUP ENGINE (SheetJS)
+       ========================================================================== */
+    function exportCompleteXLSX() {
+      if (typeof XLSX === 'undefined') {
+        showToast('Excel-Exportbibliothek konnte nicht geladen werden.', 'error');
+        return;
+      }
+
+      const sortedWards = getSortedWardsList();
+
+      // Sheet 1: Stationsübersicht
+      const wardRows = sortedWards.map(w => {
+        const stats = getWardStats(w.id);
+        const latestStatusLabel = stats.latestVisit
+          ? (VISIT_STATUS[stats.latestVisit.status]?.label || stats.latestVisit.status)
+          : 'Noch nicht besucht';
+        return {
+          'Stationsnummer': w.stationNumber,
+          'Stationsname': w.wardName || '',
+          'Adresse': w.location,
+          'Ansprechpartner': w.contactName || '',
+          'Ansprechpartner-Rolle': w.contactRole || '',
+          'Kontaktdaten': w.contactInfo || '',
+          'Postfach-Ort': w.mailboxLocation,
+          'Stationsanmerkungen': w.notes || '',
+          'Anzahl Rundgänge': stats.visitCount,
+          'Broad Consent Gesamtzahl': stats.totalConsents,
+          'Letzter Rundgang': stats.latestVisit ? formatDateDE(stats.latestVisit.date) : '—',
+          'Letzter Status': latestStatusLabel
+        };
+      });
+
+      // Sheet 2: Rundgänge
+      const wardMap = Object.fromEntries(state.wards.map(w => [w.id, w]));
+      const sortedVisits = [...state.visits].sort((a, b) => {
+        if (b.date !== a.date) return b.date.localeCompare(a.date);
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+
+      const visitRows = sortedVisits.map(v => {
+        const w = wardMap[v.wardId];
+        return {
+          'Stationsnummer': w ? w.stationNumber : 'Unbekannt',
+          'Stationsname': w ? (w.wardName || '') : '',
+          'Datum': formatDateDE(v.date),
+          'Status': VISIT_STATUS[v.status]?.label || v.status,
+          'Anzahl Broad Consents': v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0,
+          'Rundgangsnotiz': v.note || ''
+        };
+      });
+
+      const wb = XLSX.utils.book_new();
+      const wsWards = XLSX.utils.json_to_sheet(
+        wardRows.length > 0 ? wardRows : [{ 'Hinweis': 'Keine Stationen vorhanden' }]
+      );
+      const wsVisits = XLSX.utils.json_to_sheet(
+        visitRows.length > 0 ? visitRows : [{ 'Hinweis': 'Keine Rundgänge vorhanden' }]
+      );
+
+      wsWards['!cols'] = [
+        { wch: 16 }, { wch: 26 }, { wch: 28 }, { wch: 22 }, { wch: 20 },
+        { wch: 24 }, { wch: 32 }, { wch: 34 }, { wch: 16 }, { wch: 22 },
+        { wch: 16 }, { wch: 24 }
+      ];
+      wsVisits['!cols'] = [
+        { wch: 16 }, { wch: 26 }, { wch: 14 }, { wch: 26 }, { wch: 20 }, { wch: 42 }
+      ];
+
+      XLSX.utils.book_append_sheet(wb, wsWards, 'Stationsübersicht');
+      XLSX.utils.book_append_sheet(wb, wsVisits, 'Rundgänge');
+
+      const filename = `ZKIMED_Consent_Gesamtdaten_${getTodayISO()}.xlsx`;
+      XLSX.writeFile(wb, filename);
+      showToast(`Excel-Gesamtexport erstellt: ${filename}`, 'success');
+    }
+
+    function exportDayXLSX(targetDateISO) {
+      if (typeof XLSX === 'undefined') {
+        showToast('Excel-Exportbibliothek konnte nicht geladen werden.', 'error');
+        return;
+      }
+
+      const dayVisits = state.visits
+        .filter(v => v.date === targetDateISO)
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+
+      if (dayVisits.length === 0) {
+        showToast(`Keine Rundgänge für den ${formatDateDE(targetDateISO)} vorhanden.`, 'error');
+        return;
+      }
+
+      const wardMap = Object.fromEntries(state.wards.map(w => [w.id, w]));
+      const rows = dayVisits.map(v => {
+        const w = wardMap[v.wardId];
+        return {
+          'Stationsnummer': w ? w.stationNumber : 'Unbekannt',
+          'Stationsname': w ? (w.wardName || '') : '',
+          'Standort': w ? w.location : '',
+          'Datum': formatDateDE(v.date),
+          'Status': VISIT_STATUS[v.status]?.label || v.status,
+          'Anzahl Broad Consents': v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0,
+          'Rundgangsnotiz': v.note || '',
+          'Ansprechpartner': w ? (w.contactName || '') : ''
+        };
+      });
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(rows);
+      ws['!cols'] = [
+        { wch: 16 }, { wch: 26 }, { wch: 28 }, { wch: 14 },
+        { wch: 26 }, { wch: 20 }, { wch: 40 }, { wch: 22 }
+      ];
+      XLSX.utils.book_append_sheet(wb, ws, 'Tagesrundgang');
+
+      const filename = `ZKIMED_Tagesrundgang_${targetDateISO}.xlsx`;
+      XLSX.writeFile(wb, filename);
+      showToast(`Tagesrundgang exportiert: ${filename}`, 'success');
+    }
+
+    function exportJSONBackup() {
+      const payload = {
+        system: 'ZKIMED | CONSENT OPERATIONS',
+        exportedAt: new Date().toISOString(),
+        wards: state.wards,
+        visits: state.visits,
+        settings: state.settings
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ZKIMED_Backup_${getTodayISO()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('JSON-Sicherung heruntergeladen.', 'success');
+    }
+
+    /* ==========================================================================
+       9. UI COMPONENTS & VIEW RENDERERS
+       ========================================================================== */
+    function renderStatusBadge(statusKey, compact = false) {
+      const st = VISIT_STATUS[statusKey] || VISIT_STATUS.LEER;
+      return `
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 border ${st.borderClass} ${st.bgClass} ${st.textClass} rounded-[2px] font-semibold ${compact ? 'text-xs' : 'text-xs sm:text-sm'}">
+          <span class="w-2 h-2 rounded-full shrink-0" style="background-color:${st.dotColor}"></span>
+          <span>${escapeHTML(st.label)}</span>
+        </span>
+      `;
+    }
+
+    function renderHeader() {
+      const stats = getGlobalStats();
+      const todayDE = formatDateDE(getTodayISO());
+      const inWalkMode = state.ui.activeTab === 'WALK_MODE';
+
+      return `
+        <header class="pt-3 sm:pt-4 mb-3">
+          <!-- Top Starware / Research Lab Telemetry Strip -->
+          <div class="bg-space-headerDark text-white px-3 sm:px-4 py-1.5 rounded-t-[2px] border border-b-0 border-space-border flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono tracking-wider">
+            <div class="flex items-center gap-2.5">
+              <span class="inline-block w-2 h-2 bg-emerald-400 telemetry-dot"></span>
+              <span class="uppercase">${escapeHTML(state.settings.facilityName)}</span>
+              <span class="hidden md:inline text-white/40">|</span>
+              <span class="hidden md:inline text-white/80">${escapeHTML(state.settings.surveyTitle)}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span id="hud-save-indicator" class="text-white/85">
+                ${state.ui.lastSavedTime ? `GESPEICHERT · ${state.ui.lastSavedTime}` : 'DATEN GESPEICHERT · LOKAL'}
+              </span>
+              <span class="text-white/40">|</span>
+              <span class="font-bold text-white">${todayDE}</span>
+            </div>
+          </div>
+
+          <!-- Main Terminal Identification & Live Counters -->
+          <div class="sf-module rounded-t-none p-3 sm:p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
+            <!-- Brand & Title -->
+            <div class="flex items-center gap-3 sm:gap-4">
+              ${renderZkimedLogoSVG('w-14 h-14 sm:w-16 sm:h-16')}
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <h1 class="font-display text-lg sm:text-2xl font-bold tracking-tight text-space-graphite leading-none">
+                    ZKIMED <span class="text-space-border font-normal">|</span> <span class="text-zkimed-red">CONSENT OPERATIONS</span>
+                  </h1>
+                </div>
+                <p class="text-xs sm:text-sm text-space-slate mt-1">
+                  Clinical Research · Ward Survey &amp; Consent Tracking
+                </p>
+                <div class="mt-1.5 flex items-center gap-2">
+                  <span class="inline-block px-2 py-0.5 bg-space-metal border border-space-borderLight font-mono text-[11px] font-semibold text-space-graphite uppercase">
+                    AKTIV: ${escapeHTML(state.settings.surveyTitle)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Mission Counters & Walk Mode Trigger -->
+            <div class="flex flex-wrap sm:flex-nowrap items-stretch gap-2.5 sm:gap-3">
+              <div class="flex-1 sm:flex-initial px-3.5 py-2 bg-space-panel border border-space-borderLight rounded-[2px] min-w-[125px]">
+                <div class="font-display text-[10px] font-bold uppercase tracking-widest text-space-teal">Besucht heute</div>
+                <div class="font-mono text-xl sm:text-2xl font-bold text-space-graphite mt-0.5">
+                  ${stats.visitedTodayCount}<span class="text-sm font-normal text-space-slate"> / ${stats.totalWards}</span>
+                </div>
+              </div>
+
+              <div class="flex-1 sm:flex-initial px-3.5 py-2 bg-space-panel border border-space-borderLight rounded-[2px] min-w-[135px]">
+                <div class="font-display text-[10px] font-bold uppercase tracking-widest text-space-teal">Consents Gesamt</div>
+                <div class="font-mono text-xl sm:text-2xl font-bold text-zkimed-green mt-0.5">
+                  ${stats.totalConsents}
+                </div>
+              </div>
+
+              ${inWalkMode ? `
+                <button type="button" id="btn-exit-walk-header" class="touch-btn w-full sm:w-auto px-4 py-2.5 bg-space-graphite hover:bg-space-teal text-white font-display font-bold uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 border border-space-graphite">
+                  <span>✕ Walk Mode beenden</span>
+                </button>
+              ` : `
+                <button type="button" id="btn-launch-walk-header" class="touch-btn w-full sm:w-auto px-5 py-2.5 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm">
+                  ${ICONS.walk}
+                  <span>WALK MODE</span>
+                </button>
+              `}
+            </div>
+          </div>
+        </header>
+      `;
+    }
+
+    function renderNavigation() {
+      const navItems = [
+        { id: 'MISSION_CONTROL', label: 'MISSION CONTROL', sub: 'Dashboard', icon: ICONS.radar },
+        { id: 'STATIONS', label: 'STATIONS', sub: `${state.wards.length} Stationen`, icon: ICONS.wards },
+        { id: 'RUNDGAENGE', label: 'RUNDGÄNGE', sub: `${state.visits.length} Einträge`, icon: ICONS.history },
+        { id: 'EXPORT', label: 'DATA / EXPORT', sub: 'Excel .xlsx', icon: ICONS.export },
+        { id: 'SETTINGS', label: 'SETTINGS', sub: 'Konfiguration', icon: ICONS.settings }
+      ];
+
+      const active = state.ui.activeTab === 'WARD_DETAIL' ? 'STATIONS' : state.ui.activeTab;
+
+      return `
+        <nav aria-label="Hauptnavigation" class="mb-4 sm:mb-5">
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            ${navItems.map(item => {
+              const isActive = active === item.id;
+              return `
+                <button type="button" data-nav="${item.id}" class="nav-tab-btn touch-btn px-3.5 py-2.5 border text-left flex items-center gap-3 ${
+                  isActive
+                    ? 'bg-space-graphite text-white border-space-graphite sf-reticle shadow-sm'
+                    : 'bg-space-surface text-space-graphite border-space-border hover:bg-space-panel'
+                }">
+                  <div class="${isActive ? 'text-zkimed-red' : 'text-space-teal'} shrink-0">
+                    ${item.icon}
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-display text-xs sm:text-sm font-bold tracking-wider uppercase truncate">${item.label}</div>
+                    <div class="text-[11px] ${isActive ? 'text-white/75' : 'text-space-slate'} truncate">${item.sub}</div>
+                  </div>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        </nav>
+      `;
+    }
+
+    /* --------------------------------------------------------------------------
+       VIEW 1: MISSION CONTROL (MAIN DASHBOARD)
+       -------------------------------------------------------------------------- */
+    function renderMissionControl() {
+      const stats = getGlobalStats();
+      const totalWards = stats.totalWards;
+
+      const everPct = totalWards > 0 ? Math.round((stats.everVisitedCount / totalWards) * 100) : 0;
+      const todayPct = totalWards > 0 ? Math.round((stats.visitedTodayCount / totalWards) * 100) : 0;
+
+      const totalVisits = stats.totalVisits;
+      const greenPct = totalVisits > 0 ? Math.round((stats.statusBreakdown.BROAD_CONSENT / totalVisits) * 100) : 0;
+      const leerPct = totalVisits > 0 ? Math.round((stats.statusBreakdown.LEER / totalVisits) * 100) : 0;
+      const uninfPct = totalVisits > 0 ? Math.max(0, 100 - greenPct - leerPct) : 0;
+
+      const recentVisits = [...state.visits]
+        .sort((a, b) => {
+          if (b.date !== a.date) return b.date.localeCompare(a.date);
+          return (b.createdAt || 0) - (a.createdAt || 0);
+        })
+        .slice(0, 8);
+
+      const wardMap = Object.fromEntries(state.wards.map(w => [w.id, w]));
+
+      return `
+        <div class="space-y-5">
+          <!-- 4 TELEMETRY KPI MODULES -->
+          <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="sf-module p-4 flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="font-display text-[11px] font-bold uppercase tracking-widest text-space-teal">Registrierte Stationen</span>
+                <span class="font-mono text-[10px] text-space-slate">SEC-01</span>
+              </div>
+              <div class="font-mono text-3xl sm:text-4xl font-bold text-space-graphite my-2">${stats.totalWards}</div>
+              <div class="text-xs text-space-slate">Aktive Stationen im Verzeichnis</div>
+            </div>
+
+            <div class="sf-module p-4 flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="font-display text-[11px] font-bold uppercase tracking-widest text-space-teal">Heute Besucht</span>
+                <span class="font-mono text-[10px] text-space-slate">SEC-02</span>
+              </div>
+              <div class="font-mono text-3xl sm:text-4xl font-bold text-space-graphite my-2">
+                ${stats.visitedTodayCount}<span class="text-lg font-normal text-space-slate"> / ${stats.totalWards}</span>
+              </div>
+              <div class="text-xs text-space-slate">${stats.todayConsents} Broad Consents heute</div>
+            </div>
+
+            <div class="sf-module p-4 flex flex-col justify-between border-l-4 border-l-zkimed-green">
+              <div class="flex items-center justify-between">
+                <span class="font-display text-[11px] font-bold uppercase tracking-widest text-zkimed-green">Broad Consents Gesamt</span>
+                <span class="font-mono text-[10px] text-space-slate">SEC-03</span>
+              </div>
+              <div class="font-mono text-3xl sm:text-4xl font-bold text-zkimed-green my-2">${stats.totalConsents}</div>
+              <div class="text-xs text-space-slate">Aus ${stats.totalVisits} dokumentierten Rundgängen</div>
+            </div>
+
+            <div class="sf-module p-4 flex flex-col justify-between ${stats.unvisitedWardsCount > 0 ? 'border-l-4 border-l-zkimed-amber' : ''}">
+              <div class="flex items-center justify-between">
+                <span class="font-display text-[11px] font-bold uppercase tracking-widest ${stats.unvisitedWardsCount > 0 ? 'text-zkimed-amber' : 'text-space-teal'}">Noch nicht besucht</span>
+                <span class="font-mono text-[10px] text-space-slate">SEC-04</span>
+              </div>
+              <div class="font-mono text-3xl sm:text-4xl font-bold ${stats.unvisitedWardsCount > 0 ? 'text-zkimed-amber' : 'text-space-graphite'} my-2">
+                ${stats.unvisitedWardsCount}
+              </div>
+              <div class="text-xs text-space-slate">Stationen ohne bisherigen Rundgang</div>
+            </div>
+          </section>
+
+          <!-- QUICK ACTIONS BAR -->
+          <section class="sf-module">
+            <div class="sf-module-header accent-red justify-between">
+              <span class="sf-label">SCHNELLZUGRIFF · FIELD OPERATIONS</span>
+              <div class="starware-bars" aria-hidden="true">
+                <span style="height: 10px"></span>
+                <span style="height: 15px"></span>
+                <span style="height: 20px"></span>
+                <span style="height: 14px"></span>
+              </div>
+            </div>
+            <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <button type="button" id="mc-start-walk" class="touch-btn min-h-[56px] px-4 py-3 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2.5 shadow-sm">
+                ${ICONS.walk}
+                <span>Rundgang starten</span>
+              </button>
+
+              <button type="button" id="mc-add-ward" class="touch-btn min-h-[56px] px-4 py-3 bg-space-graphite hover:bg-space-teal text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2.5">
+                ${ICONS.plus}
+                <span>Station hinzufügen</span>
+              </button>
+
+              <button type="button" id="mc-open-stations" class="touch-btn min-h-[56px] px-4 py-3 bg-white hover:bg-space-panel text-space-graphite border border-space-border font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2.5">
+                ${ICONS.wards}
+                <span>Übersicht öffnen</span>
+              </button>
+
+              <button type="button" id="mc-open-export" class="touch-btn min-h-[56px] px-4 py-3 bg-white hover:bg-space-panel text-space-graphite border border-space-border font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2.5">
+                ${ICONS.export}
+                <span>Daten exportieren</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- PROGRESS TELEMETRY & RECENT ACTIVITY -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <!-- Left: Mission Progress Visualization -->
+            <section class="sf-module lg:col-span-5 flex flex-col">
+              <div class="sf-module-header">
+                <span class="sf-label">MISSIONSFORTSCHRITT · TELEMETRY</span>
+              </div>
+              <div class="p-4 sm:p-5 space-y-5 flex-1 flex flex-col justify-between">
+                <!-- Bar 1: Ever visited wards -->
+                <div>
+                  <div class="flex justify-between items-baseline mb-1.5">
+                    <span class="text-sm font-semibold text-space-graphite">Abgedeckte Stationen gesamt</span>
+                    <span class="font-mono text-sm font-bold text-space-graphite">${stats.everVisitedCount} / ${totalWards} (${everPct}%)</span>
+                  </div>
+                  <div class="w-full h-4 bg-space-metal border border-space-border p-0.5">
+                    <div class="h-full bg-space-graphite transition-all duration-300" style="width: ${everPct}%"></div>
+                  </div>
+                </div>
+
+                <!-- Bar 2: Visited today -->
+                <div>
+                  <div class="flex justify-between items-baseline mb-1.5">
+                    <span class="text-sm font-semibold text-space-graphite">Heutige Stationsabdeckung</span>
+                    <span class="font-mono text-sm font-bold text-zkimed-red">${stats.visitedTodayCount} / ${totalWards} (${todayPct}%)</span>
+                  </div>
+                  <div class="w-full h-4 bg-space-metal border border-space-border p-0.5">
+                    <div class="h-full bg-zkimed-red transition-all duration-300" style="width: ${todayPct}%"></div>
+                  </div>
+                </div>
+
+                <!-- Bar 3: Status distribution across all visits -->
+                <div class="pt-3 border-t border-space-borderLight">
+                  <div class="flex justify-between items-baseline mb-2">
+                    <span class="font-display text-xs font-bold uppercase tracking-wider text-space-teal">Rundgang-Statusverteilung</span>
+                    <span class="font-mono text-xs text-space-slate">${totalVisits} Rundgänge</span>
+                  </div>
+
+                  ${totalVisits === 0 ? `
+                    <div class="sf-stripes p-4 text-center font-mono text-xs uppercase tracking-wider text-space-slate">
+                      NO SURVEY LOGS RECORDED
+                    </div>
+                  ` : `
+                    <div class="w-full h-5 bg-space-metal border border-space-border flex overflow-hidden">
+                      <div class="h-full bg-zkimed-green" style="width: ${greenPct}%" title="Broad Consent eingesammelt"></div>
+                      <div class="h-full bg-zkimed-bluegrey" style="width: ${leerPct}%" title="Leer"></div>
+                      <div class="h-full bg-zkimed-amber" style="width: ${uninfPct}%" title="Uninformiert"></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3 text-xs">
+                      <div class="p-2 bg-zkimed-greenLight border border-zkimed-green/40 flex items-center justify-between">
+                        <span class="font-medium text-zkimed-green">Broad Consent</span>
+                        <span class="font-mono font-bold text-zkimed-green">${stats.statusBreakdown.BROAD_CONSENT}</span>
+                      </div>
+                      <div class="p-2 bg-zkimed-bluegreyLight border border-zkimed-bluegrey/40 flex items-center justify-between">
+                        <span class="font-medium text-zkimed-bluegrey">Leer</span>
+                        <span class="font-mono font-bold text-zkimed-bluegrey">${stats.statusBreakdown.LEER}</span>
+                      </div>
+                      <div class="p-2 bg-zkimed-amberLight border border-zkimed-amber/40 flex items-center justify-between">
+                        <span class="font-medium text-zkimed-amber">Uninformiert</span>
+                        <span class="font-mono font-bold text-zkimed-amber">${stats.statusBreakdown.UNINFORMIERT}</span>
+                      </div>
+                    </div>
+                  `}
+                </div>
+              </div>
+            </section>
+
+            <!-- Right: Latest Visit Activity -->
+            <section class="sf-module lg:col-span-7 flex flex-col">
+              <div class="sf-module-header justify-between">
+                <span class="sf-label">LETZTE RUNDGANG-AKTIVITÄTEN · SURVEY LOG</span>
+                <button type="button" id="mc-view-all-logs" class="text-xs font-display font-bold uppercase tracking-wider text-zkimed-red hover:underline">
+                  Alle anzeigen →
+                </button>
+              </div>
+              <div class="divide-y divide-space-borderLight flex-1">
+                ${recentVisits.length === 0 ? `
+                  <div class="p-8">
+                    <div class="sf-stripes p-6 text-center">
+                      <div class="font-mono text-sm font-bold text-space-slate uppercase">NO RESEARCH LOGS IN PROGRESS</div>
+                      <p class="text-sm text-space-slate mt-1">Starten Sie einen Rundgang, um den ersten Eintrag zu erfassen.</p>
+                    </div>
+                  </div>
+                ` : recentVisits.map(v => {
+                  const w = wardMap[v.wardId];
+                  return `
+                    <div data-open-ward="${v.wardId}" class="mc-activity-row p-3.5 sm:px-4 hover:bg-space-panel cursor-pointer transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div class="min-w-0 flex-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="font-mono text-xs font-bold px-2 py-0.5 bg-space-metal border border-space-borderLight text-space-graphite">
+                            ${formatDateDE(v.date)}
+                          </span>
+                          <span class="font-display font-bold text-base text-space-graphite">
+                            ${escapeHTML(w ? w.stationNumber : 'Unbekannte Station')}
+                          </span>
+                          ${w && w.wardName ? `<span class="text-xs text-space-slate truncate">· ${escapeHTML(w.wardName)}</span>` : ''}
+                        </div>
+                        ${v.note ? `<p class="text-xs sm:text-sm text-space-slate mt-1 truncate">${escapeHTML(v.note)}</p>` : ''}
+                      </div>
+                      <div class="flex items-center gap-2.5 shrink-0">
+                        ${renderStatusBadge(v.status, true)}
+                        ${v.status === 'BROAD_CONSENT' ? `
+                          <span class="font-mono text-sm font-bold px-2.5 py-1 bg-zkimed-green text-white rounded-[2px]">
+                            +${v.consentCount}
+                          </span>
+                        ` : ''}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    /* --------------------------------------------------------------------------
+       VIEW 2: WARD OVERVIEW (STATIONS DIRECTORY)
+       -------------------------------------------------------------------------- */
+    function renderStationsView() {
+      const q = state.ui.stationSearch.trim().toLowerCase();
+      const filter = state.ui.stationFilter;
+      const sortBy = state.ui.stationSortBy;
+      const sortDir = state.ui.stationSortDir;
+
+      // Enrich wards with stats
+      let list = state.wards.map(w => ({
+        ...w,
+        stats: getWardStats(w.id)
+      }));
+
+      // Search filter
+      if (q) {
+        list = list.filter(w =>
+          w.stationNumber.toLowerCase().includes(q) ||
+          (w.wardName && w.wardName.toLowerCase().includes(q)) ||
+          w.location.toLowerCase().includes(q) ||
+          w.mailboxLocation.toLowerCase().includes(q) ||
+          (w.contactName && w.contactName.toLowerCase().includes(q))
+        );
+      }
+
+      // Status filter
+      if (filter === 'UNVISITED') {
+        list = list.filter(w => w.stats.visitCount === 0);
+      } else if (filter === 'VISITED_TODAY') {
+        list = list.filter(w => w.stats.visitedToday);
+      }
+
+      // Sorting
+      list.sort((a, b) => {
+        let cmp = 0;
+        if (sortBy === 'LAST_VISIT') {
+          const da = a.stats.latestVisit ? a.stats.latestVisit.date : '0000-00-00';
+          const db = b.stats.latestVisit ? b.stats.latestVisit.date : '0000-00-00';
+          cmp = da.localeCompare(db);
+        } else {
+          cmp = a.stationNumber.localeCompare(b.stationNumber, 'de', { numeric: true, sensitivity: 'base' });
+        }
+        return sortDir === 'ASC' ? cmp : -cmp;
+      });
+
+      return `
+        <div class="space-y-4">
+          <!-- Controls & Filter Module -->
+          <section class="sf-module">
+            <div class="sf-module-header justify-between">
+              <span class="sf-label">STATIONSVERZEICHNIS · WARD DIRECTORY (${list.length} / ${state.wards.length})</span>
+              <button type="button" id="st-add-ward-btn" class="touch-btn px-4 py-2 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                ${ICONS.plus}
+                <span>Station hinzufügen</span>
+              </button>
+            </div>
+
+            <div class="p-3.5 sm:p-4 space-y-3">
+              <!-- Search & Sort Row -->
+              <div class="flex flex-col md:flex-row gap-3">
+                <div class="relative flex-1">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-space-slate pointer-events-none">
+                    ${ICONS.search}
+                  </span>
+                  <input
+                    type="search"
+                    id="st-search-input"
+                    value="${escapeHTML(state.ui.stationSearch)}"
+                    placeholder="Station, Fachbereich, Standort, Postfach oder Kontakt suchen..."
+                    class="touch-input w-full pl-10 pr-4"
+                  />
+                </div>
+
+                <div class="flex flex-wrap sm:flex-nowrap gap-2">
+                  <select id="st-sort-select" aria-label="Sortieren nach" class="touch-input font-semibold text-sm bg-white min-w-[190px]">
+                    <option value="NUMBER_ASC" ${sortBy === 'NUMBER' && sortDir === 'ASC' ? 'selected' : ''}>Stationsnummer (A → Z)</option>
+                    <option value="NUMBER_DESC" ${sortBy === 'NUMBER' && sortDir === 'DESC' ? 'selected' : ''}>Stationsnummer (Z → A)</option>
+                    <option value="LAST_VISIT_DESC" ${sortBy === 'LAST_VISIT' && sortDir === 'DESC' ? 'selected' : ''}>Letzter Rundgang (Neueste)</option>
+                    <option value="LAST_VISIT_ASC" ${sortBy === 'LAST_VISIT' && sortDir === 'ASC' ? 'selected' : ''}>Letzter Rundgang (Älteste)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Filter Pills -->
+              <div class="flex flex-wrap gap-2">
+                <button type="button" data-st-filter="ALL" class="st-filter-btn touch-btn px-4 py-2 border text-xs sm:text-sm font-semibold ${filter === 'ALL' ? 'bg-space-graphite text-white border-space-graphite' : 'bg-white text-space-graphite border-space-border hover:bg-space-panel'}">
+                  Alle Stationen (${state.wards.length})
+                </button>
+                <button type="button" data-st-filter="UNVISITED" class="st-filter-btn touch-btn px-4 py-2 border text-xs sm:text-sm font-semibold ${filter === 'UNVISITED' ? 'bg-zkimed-amber text-white border-zkimed-amber' : 'bg-white text-space-graphite border-space-border hover:bg-space-panel'}">
+                  Noch nicht besucht (${state.wards.filter(w => getWardStats(w.id).visitCount === 0).length})
+                </button>
+                <button type="button" data-st-filter="VISITED_TODAY" class="st-filter-btn touch-btn px-4 py-2 border text-xs sm:text-sm font-semibold ${filter === 'VISITED_TODAY' ? 'bg-zkimed-green text-white border-zkimed-green' : 'bg-white text-space-graphite border-space-border hover:bg-space-panel'}">
+                  Heute besucht (${state.wards.filter(w => getWardStats(w.id).visitedToday).length})
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Ward Cards List -->
+          ${list.length === 0 ? `
+            <div class="sf-module p-6">
+              <div class="sf-stripes p-8 text-center">
+                <div class="font-mono text-sm font-bold uppercase text-space-slate">KEINE PASSENDEN STATIONEN GEFUNDEN</div>
+                <p class="text-sm text-space-slate mt-1">Passen Sie Suchbegriff oder Filter an oder legen Sie eine neue Station an.</p>
+              </div>
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              ${list.map(w => {
+                const st = w.stats;
+                return `
+                  <article data-ward-card="${w.id}" class="ward-card sf-module hover:border-space-graphite cursor-pointer transition-colors flex flex-col justify-between ${st.visitedToday ? 'border-l-4 border-l-zkimed-green' : st.visitCount === 0 ? 'border-l-4 border-l-zkimed-amber' : ''}">
+                    <div class="p-4 space-y-3">
+                      <!-- Card Header -->
+                      <div class="flex items-start justify-between gap-2">
+                        <div>
+                          <div class="flex flex-wrap items-center gap-2">
+                            <h2 class="font-display text-xl font-bold text-space-graphite">${escapeHTML(w.stationNumber)}</h2>
+                            ${st.visitedToday ? `
+                              <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-zkimed-green text-white font-mono text-[11px] font-bold uppercase">
+                                ${ICONS.check} HEUTE
+                              </span>
+                            ` : st.visitCount === 0 ? `
+                              <span class="inline-flex items-center px-2 py-0.5 bg-zkimed-amberLight border border-zkimed-amber text-zkimed-amber font-mono text-[11px] font-bold uppercase">
+                                NEU / UNBESUCHT
+                              </span>
+                            ` : ''}
+                          </div>
+                          ${w.wardName ? `<div class="text-sm font-semibold text-space-slate mt-0.5">${escapeHTML(w.wardName)}</div>` : ''}
+                        </div>
+
+                        <div class="text-right shrink-0 bg-space-panel border border-space-borderLight px-3 py-1.5">
+                          <div class="font-display text-[10px] font-bold uppercase tracking-wider text-space-teal">Consents</div>
+                          <div class="font-mono text-xl font-bold text-zkimed-green">${st.totalConsents}</div>
+                        </div>
+                      </div>
+
+                      <!-- Location & Contact -->
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-space-slate">
+                        <div class="flex items-center gap-1.5 truncate">
+                          <span class="text-space-teal shrink-0">${ICONS.pin}</span>
+                          <span class="truncate">${escapeHTML(w.location)}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 truncate">
+                          <span class="text-space-teal shrink-0">${ICONS.user}</span>
+                          <span class="truncate">${escapeHTML(w.contactName || 'Kein Kontakt hinterlegt')}</span>
+                        </div>
+                      </div>
+
+                      <!-- Prominent Mailbox Callout -->
+                      <div class="p-2.5 bg-space-panel border border-space-borderLight flex items-start gap-2">
+                        <span class="text-zkimed-red mt-0.5 shrink-0">${ICONS.mailbox}</span>
+                        <div class="text-xs sm:text-sm">
+                          <span class="font-display font-bold uppercase text-[11px] tracking-wider text-space-teal mr-1.5">Postfach:</span>
+                          <span class="font-medium text-space-graphite">${escapeHTML(w.mailboxLocation)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Card Footer: Last Visit + Direct Quick-Add Visit Button -->
+                    <div class="px-4 py-3 bg-space-panel border-t border-space-borderLight flex flex-wrap items-center justify-between gap-2">
+                      <div class="text-xs">
+                        ${st.latestVisit ? `
+                          <div class="flex flex-wrap items-center gap-2">
+                            <span class="font-mono font-semibold text-space-graphite">${formatDateDE(st.latestVisit.date)}</span>
+                            ${renderStatusBadge(st.latestVisit.status, true)}
+                          </div>
+                        ` : `
+                          <span class="font-mono text-space-slate uppercase">Noch kein Rundgang</span>
+                        `}
+                      </div>
+
+                      <button type="button" data-quick-visit="${w.id}" class="quick-visit-btn touch-btn px-3.5 py-2 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                        ${ICONS.plus}
+                        <span>Neuer Rundgang</span>
+                      </button>
+                    </div>
+                  </article>
+                `;
+              }).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    /* --------------------------------------------------------------------------
+       VIEW 3: WARD DETAIL PAGE (3 TABS + PREV/NEXT NAVIGATION)
+       -------------------------------------------------------------------------- */
+    function renderWardDetailView() {
+      const sorted = getSortedWardsList();
+      const idx = sorted.findIndex(w => w.id === state.ui.selectedWardId);
+      const ward = idx >= 0 ? sorted[idx] : sorted[0];
+
+      if (!ward) {
+        state.ui.activeTab = 'STATIONS';
+        return renderStationsView();
+      }
+      state.ui.selectedWardId = ward.id;
+
+      const prevWard = idx > 0 ? sorted[idx - 1] : null;
+      const nextWard = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+      const stats = getWardStats(ward.id);
+      const visits = getWardVisits(ward.id);
+      const activeSubTab = state.ui.wardDetailTab;
+
+      return `
+        <div class="space-y-4">
+          <!-- Top Breadcrumb & Prev/Next Ward Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <button type="button" id="wd-back-btn" class="touch-btn px-4 py-2.5 bg-white hover:bg-space-panel border border-space-border font-display text-xs sm:text-sm font-bold uppercase tracking-wider text-space-graphite">
+              ← Zurück zur Übersicht
+            </button>
+
+            <div class="flex items-center gap-2">
+              <button type="button" id="wd-prev-btn" ${!prevWard ? 'disabled' : ''} class="touch-btn px-3.5 py-2.5 border border-space-border bg-white font-display text-xs font-bold uppercase tracking-wider ${prevWard ? 'hover:bg-space-panel text-space-graphite' : 'opacity-40 cursor-not-allowed'}">
+                ‹ Vorherige
+              </button>
+              <span class="font-mono text-xs font-semibold px-2.5 py-1 bg-space-metal border border-space-borderLight">
+                ${idx + 1} / ${sorted.length}
+              </span>
+              <button type="button" id="wd-next-btn" ${!nextWard ? 'disabled' : ''} class="touch-btn px-3.5 py-2.5 border border-space-border bg-white font-display text-xs font-bold uppercase tracking-wider ${nextWard ? 'hover:bg-space-panel text-space-graphite' : 'opacity-40 cursor-not-allowed'}">
+                Nächste ›
+              </button>
+            </div>
+          </div>
+
+          <!-- Ward Identity Header & Mailbox Highlight -->
+          <section class="sf-module">
+            <div class="sf-module-header accent-red justify-between">
+              <span class="sf-label">STATIONSPROFIL · WARD TELEMETRY</span>
+              <button type="button" id="wd-delete-ward-btn" class="px-3 py-1 border border-zkimed-red/40 bg-zkimed-redLight text-zkimed-red hover:bg-zkimed-red hover:text-white font-display text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                ${ICONS.trash}
+                <span>Station löschen</span>
+              </button>
+            </div>
+
+            <div class="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <div class="flex flex-wrap items-center gap-2.5">
+                  <h2 class="font-display text-2xl sm:text-3xl font-bold text-space-graphite">${escapeHTML(ward.stationNumber)}</h2>
+                  ${stats.visitedToday ? `
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-zkimed-green text-white font-mono text-xs font-bold uppercase">
+                      ${ICONS.check} HEUTE BESUCHT
+                    </span>
+                  ` : ''}
+                </div>
+                <p class="text-sm sm:text-base text-space-slate mt-1">
+                  ${ward.wardName ? `<strong class="text-space-graphite">${escapeHTML(ward.wardName)}</strong> · ` : ''}${escapeHTML(ward.location)}
+                </p>
+
+                <!-- Fast-access Mailbox Banner -->
+                <div class="mt-3 inline-flex items-center gap-2.5 px-3.5 py-2 bg-space-panel border border-space-border">
+                  <span class="text-zkimed-red">${ICONS.mailbox}</span>
+                  <span class="font-display text-xs font-bold uppercase tracking-wider text-space-teal">Postfach:</span>
+                  <span class="text-sm font-semibold text-space-graphite">${escapeHTML(ward.mailboxLocation)}</span>
+                </div>
+              </div>
+
+              <!-- Ward Key Counters -->
+              <div class="grid grid-cols-3 gap-2.5 shrink-0">
+                <div class="p-3 bg-zkimed-greenLight border border-zkimed-green/40 text-center min-w-[95px]">
+                  <div class="font-display text-[10px] font-bold uppercase tracking-wider text-zkimed-green">Consents</div>
+                  <div class="font-mono text-2xl font-bold text-zkimed-green mt-0.5">${stats.totalConsents}</div>
+                </div>
+                <div class="p-3 bg-space-panel border border-space-borderLight text-center min-w-[95px]">
+                  <div class="font-display text-[10px] font-bold uppercase tracking-wider text-space-teal">Rundgänge</div>
+                  <div class="font-mono text-2xl font-bold text-space-graphite mt-0.5">${stats.visitCount}</div>
+                </div>
+                <div class="p-3 bg-space-panel border border-space-borderLight text-center min-w-[105px]">
+                  <div class="font-display text-[10px] font-bold uppercase tracking-wider text-space-teal">Letzter Besuch</div>
+                  <div class="font-mono text-sm sm:text-base font-bold text-space-graphite mt-1.5">
+                    ${stats.latestVisit ? formatDateDE(stats.latestVisit.date) : '—'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 SUB-TABS -->
+            <div class="grid grid-cols-3 border-t border-space-border bg-space-metal">
+              <button type="button" data-wd-tab="OVERVIEW" class="wd-tab-btn touch-btn py-3.5 px-2 sm:px-4 font-display text-xs sm:text-sm font-bold uppercase tracking-wider border-r border-space-border ${activeSubTab === 'OVERVIEW' ? 'bg-space-surface text-zkimed-red border-b-2 border-b-zkimed-red' : 'text-space-slate hover:bg-space-panel'}">
+                1. Übersicht
+              </button>
+              <button type="button" data-wd-tab="HISTORY" class="wd-tab-btn touch-btn py-3.5 px-2 sm:px-4 font-display text-xs sm:text-sm font-bold uppercase tracking-wider border-r border-space-border ${activeSubTab === 'HISTORY' ? 'bg-space-surface text-zkimed-red border-b-2 border-b-zkimed-red' : 'text-space-slate hover:bg-space-panel'}">
+                2. Historie (${visits.length})
+              </button>
+              <button type="button" data-wd-tab="QUICK_ENTRY" class="wd-tab-btn touch-btn py-3.5 px-2 sm:px-4 font-display text-xs sm:text-sm font-bold uppercase tracking-wider ${activeSubTab === 'QUICK_ENTRY' ? 'bg-zkimed-red text-white' : 'text-zkimed-red bg-zkimed-redLight hover:bg-zkimed-red hover:text-white'}">
+                3. Schnellerfassung
+              </button>
+            </div>
+          </section>
+
+          <!-- SUB-TAB CONTENT -->
+          ${activeSubTab === 'OVERVIEW' ? renderWardOverviewTab(ward) : ''}
+          ${activeSubTab === 'HISTORY' ? renderWardHistoryTab(ward, visits) : ''}
+          ${activeSubTab === 'QUICK_ENTRY' ? renderWardQuickEntryTab(ward, nextWard) : ''}
+        </div>
+      `;
+    }
+
+    function renderWardOverviewTab(ward) {
+      return `
+        <section class="sf-module">
+          <div class="sf-module-header">
+            <span class="sf-label">STAMMDATEN &amp; POSTFACH-KONFIGURATION · EDITIERBAR</span>
+          </div>
+          <form id="wd-edit-form" class="p-4 sm:p-6 space-y-5">
+            <div id="wd-edit-error" class="hidden p-3 bg-zkimed-redLight border border-zkimed-red text-zkimed-red text-sm font-medium"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">Stationsnummer *</label>
+                <input type="text" name="stationNumber" value="${escapeHTML(ward.stationNumber)}" required class="touch-input w-full font-mono" />
+              </div>
+              <div>
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">Stationsname / Fachbereich</label>
+                <input type="text" name="wardName" value="${escapeHTML(ward.wardName || '')}" class="touch-input w-full" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">Adresse / Standort im Krankenhaus *</label>
+                <input type="text" name="location" value="${escapeHTML(ward.location)}" required class="touch-input w-full" />
+              </div>
+              <div>
+                <label class="block font-display text-xs font-bold uppercase tracking-wider text-zkimed-red mb-1.5">Postfach-Ort *</label>
+                <input type="text" name="mailboxLocation" value="${escapeHTML(ward.mailboxLocation)}" required class="touch-input w-full" />
+              </div>
+            </div>
+
+            <div class="border-t border-space-borderLight pt-4">
+              <h3 class="font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-3">Ansprechpartner</h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-space-slate mb-1">Name</label>
+                  <input type="text" name="contactName" value="${escapeHTML(ward.contactName || '')}" class="touch-input w-full" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-space-slate mb-1">Rolle / Position</label>
+                  <input type="text" name="contactRole" value="${escapeHTML(ward.contactRole || '')}" class="touch-input w-full" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-space-slate mb-1">Kontaktdaten</label>
+                  <input type="text" name="contactInfo" value="${escapeHTML(ward.contactInfo || '')}" class="touch-input w-full" />
+                </div>
+              </div>
+              <div class="mt-3">
+                <label class="block text-xs font-semibold text-space-slate mb-1">Ansprechpartner-Notizen</label>
+                <input type="text" name="contactNotes" value="${escapeHTML(ward.contactNotes || '')}" class="touch-input w-full" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">Allgemeine Stationsanmerkungen</label>
+              <textarea name="notes" rows="3" class="touch-input w-full">${escapeHTML(ward.notes || '')}</textarea>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-space-borderLight">
+              <button type="button" id="wd-goto-qe-btn" class="touch-btn px-5 py-3 border border-zkimed-red text-zkimed-red bg-zkimed-redLight hover:bg-zkimed-red hover:text-white font-display text-xs sm:text-sm font-bold uppercase tracking-wider">
+                + Neuer Rundgang für diese Station
+              </button>
+              <button type="submit" class="touch-btn px-6 py-3 bg-space-graphite hover:bg-space-teal text-white font-display text-xs sm:text-sm font-bold uppercase tracking-wider">
+                Änderungen speichern
+              </button>
+            </div>
+          </form>
+        </section>
+      `;
+    }
+
+    function renderWardHistoryTab(ward, visits) {
+      return `
+        <section class="sf-module">
+          <div class="sf-module-header justify-between">
+            <span class="sf-label">RUNDGANG-HISTORIE · CHRONOLOGICAL SURVEY LOG</span>
+            <button type="button" id="wd-hist-add-btn" class="touch-btn px-4 py-2 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              ${ICONS.plus}
+              <span>Neuer Rundgang</span>
+            </button>
+          </div>
+
+          ${visits.length === 0 ? `
+            <div class="p-6">
+              <div class="sf-stripes p-8 text-center">
+                <div class="font-mono text-sm font-bold uppercase text-space-slate">NO VISITS RECORDED FOR ${escapeHTML(ward.stationNumber)}</div>
+                <p class="text-sm text-space-slate mt-1 mb-4">Für diese Station wurden noch keine Rundgänge dokumentiert.</p>
+                <button type="button" id="wd-hist-empty-add" class="touch-btn px-5 py-3 bg-zkimed-red text-white font-display text-xs font-bold uppercase tracking-wider">
+                  Ersten Rundgang erfassen
+                </button>
+              </div>
+            </div>
+          ` : `
+            <div class="divide-y divide-space-borderLight">
+              ${visits.map((v, index) => {
+                const isLatest = index === 0;
+                return `
+                  <div class="p-4 sm:p-5 ${isLatest ? 'bg-space-panel/70 border-l-4 border-l-zkimed-red' : 'bg-white'} flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="space-y-1.5 flex-1">
+                      <div class="flex flex-wrap items-center gap-2.5">
+                        <span class="font-mono text-base font-bold text-space-graphite">${formatDateDE(v.date)}</span>
+                        ${isLatest ? `
+                          <span class="px-2 py-0.5 bg-space-graphite text-white font-mono text-[10px] font-bold uppercase tracking-wider">
+                            AKTUELLSTER EINTRAG
+                          </span>
+                        ` : ''}
+                        ${renderStatusBadge(v.status)}
+                        ${v.status === 'BROAD_CONSENT' ? `
+                          <span class="font-mono text-sm font-bold px-2.5 py-0.5 bg-zkimed-green text-white rounded-[2px]">
+                            Anzahl: ${v.consentCount}
+                          </span>
+                        ` : ''}
+                      </div>
+                      <p class="text-sm text-space-slate">
+                        ${v.note ? escapeHTML(v.note) : '<span class="italic opacity-65">Keine Notiz hinterlegt</span>'}
+                      </p>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                      <button type="button" data-edit-visit="${v.id}" class="edit-visit-btn touch-btn px-3.5 py-2 border border-space-border bg-white hover:bg-space-panel text-space-graphite text-xs font-semibold flex items-center gap-1.5">
+                        ${ICONS.edit}
+                        <span>Bearbeiten</span>
+                      </button>
+                      <button type="button" data-delete-visit="${v.id}" class="delete-visit-btn touch-btn px-3.5 py-2 border border-zkimed-red/40 bg-zkimed-redLight hover:bg-zkimed-red hover:text-white text-zkimed-red text-xs font-semibold flex items-center gap-1.5">
+                        ${ICONS.trash}
+                        <span>Löschen</span>
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+        </section>
+      `;
+    }
+
+    function renderWardQuickEntryTab(ward, nextWard) {
+      const { qeDate, qeStatus, qeCount, qeNote } = state.ui;
+
+      return `
+        <section class="sf-module">
+          <div class="sf-module-header accent-red justify-between">
+            <span class="sf-label">SCHNELLERFASSUNG · FIELD CONSENT ENTRY</span>
+            <span class="font-mono text-xs text-space-slate">${escapeHTML(ward.stationNumber)}</span>
+          </div>
+
+          <div class="p-4 sm:p-6 space-y-6">
+            <!-- 1. DATE -->
+            <div>
+              <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-2">
+                1. Datum des Rundgangs
+              </label>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <input type="date" id="qe-date-input" value="${escapeHTML(qeDate)}" class="touch-input font-mono text-base font-semibold min-w-[190px]" />
+                <button type="button" id="qe-date-today" class="touch-btn px-4 py-2.5 border border-space-border bg-white hover:bg-space-panel text-xs font-display font-bold uppercase tracking-wider">
+                  Heute (${formatDateDE(getTodayISO())})
+                </button>
+                <button type="button" id="qe-date-yesterday" class="touch-btn px-4 py-2.5 border border-space-border bg-white hover:bg-space-panel text-xs font-display font-bold uppercase tracking-wider">
+                  Gestern
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. CONSENT STATUS -->
+            <div>
+              <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-2">
+                2. Consent-Status auswählen
+              </label>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                ${Object.values(VISIT_STATUS).map(st => {
+                  const active = qeStatus === st.key;
+                  let activeStyle = 'border-space-border bg-white text-space-graphite hover:bg-space-panel';
+                  if (active) {
+                    if (st.key === 'BROAD_CONSENT') activeStyle = 'border-zkimed-green bg-zkimed-green text-white shadow-sm';
+                    else if (st.key === 'UNINFORMIERT') activeStyle = 'border-zkimed-amber bg-zkimed-amber text-white shadow-sm';
+                    else activeStyle = 'border-zkimed-bluegrey bg-zkimed-bluegrey text-white shadow-sm';
+                  }
+                  return `
+                    <button type="button" data-qe-status="${st.key}" class="qe-status-btn touch-btn min-h-[60px] px-4 py-3 border-2 text-left flex items-center justify-between ${activeStyle}">
+                      <span class="font-bold text-base">${escapeHTML(st.label)}</span>
+                      <span class="font-mono text-xs opacity-80">${st.code}</span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <!-- 3. DYNAMIC QUANTITY INPUT (Broad Consent eingesammelt) -->
+            ${qeStatus === 'BROAD_CONSENT' ? `
+              <div class="p-4 sm:p-5 bg-zkimed-greenLight border-2 border-zkimed-green">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <label class="font-display text-xs sm:text-sm font-bold uppercase tracking-wider text-zkimed-green">
+                    3. Anzahl eingesammelter Broad Consents
+                  </label>
+                  <div class="flex gap-1.5">
+                    <button type="button" data-qe-add="1" class="qe-quick-add touch-btn px-3 py-1.5 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+1</button>
+                    <button type="button" data-qe-add="2" class="qe-quick-add touch-btn px-3 py-1.5 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+2</button>
+                    <button type="button" data-qe-add="5" class="qe-quick-add touch-btn px-3 py-1.5 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+5</button>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 max-w-md">
+                  <button type="button" id="qe-dec-btn" class="touch-btn w-16 h-16 bg-white border-2 border-zkimed-green text-zkimed-green font-mono text-3xl font-bold flex items-center justify-center hover:bg-zkimed-green hover:text-white">
+                    −
+                  </button>
+                  <input type="number" id="qe-count-input" min="0" inputmode="numeric" value="${qeCount}" class="touch-input flex-1 h-16 text-center font-mono text-3xl font-bold border-2 border-zkimed-green" />
+                  <button type="button" id="qe-inc-btn" class="touch-btn w-16 h-16 bg-zkimed-green text-white font-mono text-3xl font-bold flex items-center justify-center hover:opacity-90">
+                    +
+                  </button>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- 4. VISIT NOTES + QUICK CHIPS -->
+            <div>
+              <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-2">
+                ${qeStatus === 'BROAD_CONSENT' ? '4.' : '3.'} Rundgangsnotiz (Optional)
+              </label>
+              <input type="text" id="qe-note-input" value="${escapeHTML(qeNote)}" placeholder="Kurze Beobachtung oder Hinweis eingeben..." class="touch-input w-full mb-2.5" />
+              <div class="flex flex-wrap gap-2">
+                ${state.settings.quickNotes.map(tpl => `
+                  <button type="button" data-qe-chip="${escapeHTML(tpl)}" class="qe-note-chip touch-btn min-h-[40px] px-3 py-1.5 bg-space-panel hover:bg-space-metal border border-space-borderLight text-xs text-space-graphite text-left">
+                    + ${escapeHTML(tpl)}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- STICKY / PROMINENT SAVE ACTIONS -->
+            <div class="sticky bottom-2 z-20 p-3 bg-space-surface border border-space-border shadow-md flex flex-col sm:flex-row gap-3">
+              <button type="button" id="qe-save-btn" class="touch-btn min-h-[56px] flex-1 px-5 py-3 bg-space-graphite hover:bg-space-teal text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+                ${ICONS.check}
+                <span>Rundgang speichern</span>
+              </button>
+
+              ${nextWard ? `
+                <button type="button" id="qe-save-next-btn" class="touch-btn min-h-[56px] flex-1 px-5 py-3 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+                  <span>Speichern &amp; Nächste (${escapeHTML(nextWard.stationNumber)}) →</span>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    /* --------------------------------------------------------------------------
+       VIEW 4: CONTINUOUS WALK MODE (STREAMLINED WARD-TO-WARD FIELD MODE)
+       -------------------------------------------------------------------------- */
+    function renderWalkMode() {
+      const sorted = getSortedWardsList();
+      if (sorted.length === 0) {
+        return `
+          <div class="sf-module p-6 text-center">
+            <p class="mb-4">Keine Stationen registriert.</p>
+            <button type="button" id="wm-add-ward" class="touch-btn px-5 py-3 bg-zkimed-red text-white font-bold">Station anlegen</button>
+          </div>
+        `;
+      }
+
+      let currentIdx = sorted.findIndex(w => w.id === state.ui.walkWardId);
+      if (currentIdx === -1) {
+        currentIdx = 0;
+        state.ui.walkWardId = sorted[0].id;
+      }
+      const ward = sorted[currentIdx];
+      const nextWard = sorted[(currentIdx + 1) % sorted.length];
+      const today = getTodayISO();
+      const visitedTodayCount = sorted.filter(w => state.visits.some(v => v.wardId === w.id && v.date === today)).length;
+      const wardStats = getWardStats(ward.id);
+
+      const { walkDate, walkStatus, walkCount, walkNote } = state.ui;
+
+      return `
+        <div class="space-y-4">
+          <!-- WALK MODE BANNER & STATION PROGRESS STRIP -->
+          <section class="sf-module border-zkimed-red">
+            <div class="bg-zkimed-red text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="w-2.5 h-2.5 bg-white telemetry-dot"></span>
+                <span class="font-display font-bold uppercase tracking-widest text-sm">CONTINUOUS WALK MODE · AKTIVER RUNDGANG</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="font-mono text-xs sm:text-sm font-bold">HEUTE ABGESCHLOSSEN: ${visitedTodayCount} / ${sorted.length}</span>
+                <button type="button" id="wm-exit-btn" class="px-3 py-1 bg-white/15 hover:bg-white/25 border border-white/40 text-xs font-display font-bold uppercase tracking-wider">
+                  Beenden
+                </button>
+              </div>
+            </div>
+
+            <!-- Horizontal Touchable Station Strip -->
+            <div class="p-3 bg-space-panel border-b border-space-borderLight flex items-center gap-2 overflow-x-auto no-scrollbar">
+              ${sorted.map((w, i) => {
+                const isCurrent = w.id === ward.id;
+                const doneToday = state.visits.some(v => v.wardId === w.id && v.date === today);
+                return `
+                  <button type="button" data-wm-select="${w.id}" class="wm-pill-btn touch-btn min-h-[44px] px-3.5 py-2 border shrink-0 font-mono text-xs font-bold flex items-center gap-1.5 ${
+                    isCurrent
+                      ? 'bg-space-graphite text-white border-space-graphite sf-reticle'
+                      : doneToday
+                        ? 'bg-zkimed-greenLight text-zkimed-green border-zkimed-green'
+                        : 'bg-white text-space-graphite border-space-border hover:bg-space-metal'
+                  }">
+                    <span>${i + 1}. ${escapeHTML(w.stationNumber)}</span>
+                    ${doneToday ? `<span>✓</span>` : ''}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- Current Station Field Briefing -->
+            <div class="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+              <!-- Left Column: Station Essentials & Mailbox -->
+              <div class="lg:col-span-5 space-y-3.5 border-b lg:border-b-0 lg:border-r border-space-borderLight pb-4 lg:pb-0 lg:pr-5">
+                <div class="flex items-start justify-between gap-2">
+                  <div>
+                    <span class="font-mono text-xs font-bold text-space-teal">STATION ${currentIdx + 1} VON ${sorted.length}</span>
+                    <h2 class="font-display text-2xl sm:text-3xl font-bold text-space-graphite mt-0.5">${escapeHTML(ward.stationNumber)}</h2>
+                    ${ward.wardName ? `<div class="text-base font-semibold text-space-slate">${escapeHTML(ward.wardName)}</div>` : ''}
+                  </div>
+                  ${wardStats.visitedToday ? `
+                    <span class="px-2.5 py-1 bg-zkimed-green text-white font-mono text-xs font-bold">✓ HEUTE ERFASST</span>
+                  ` : ''}
+                </div>
+
+                <div class="p-3.5 bg-zkimed-redLight border-l-4 border-l-zkimed-red">
+                  <div class="font-display text-xs font-bold uppercase tracking-wider text-zkimed-red flex items-center gap-1.5">
+                    ${ICONS.mailbox}
+                    <span>Postfach-Ort</span>
+                  </div>
+                  <div class="text-base font-bold text-space-graphite mt-1">${escapeHTML(ward.mailboxLocation)}</div>
+                </div>
+
+                <div class="space-y-2 text-sm">
+                  <div>
+                    <span class="font-display text-xs font-bold uppercase text-space-teal block">Standort</span>
+                    <span class="text-space-graphite font-medium">${escapeHTML(ward.location)}</span>
+                  </div>
+                  <div>
+                    <span class="font-display text-xs font-bold uppercase text-space-teal block">Ansprechpartner</span>
+                    <span class="text-space-graphite font-medium">
+                      ${escapeHTML(ward.contactName || '—')}
+                      ${ward.contactInfo ? `<span class="font-mono text-xs text-space-slate"> (${escapeHTML(ward.contactInfo)})</span>` : ''}
+                    </span>
+                  </div>
+                  ${ward.notes ? `
+                    <div class="p-3 bg-space-panel border border-space-borderLight">
+                      <span class="font-display text-[11px] font-bold uppercase text-space-teal block mb-1">Stationshinweis</span>
+                      <p class="text-xs sm:text-sm text-space-graphite leading-relaxed">${escapeHTML(ward.notes)}</p>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <div class="pt-1">
+                  <button type="button" id="wm-open-detail-btn" class="text-xs font-display font-bold uppercase tracking-wider text-space-teal hover:text-zkimed-red underline">
+                    Vollständiges Stationsprofil öffnen →
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right Column: Fast Consent Entry -->
+              <div class="lg:col-span-7 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="font-display text-xs font-bold uppercase tracking-wider text-space-teal">Rundgang dokumentieren</span>
+                  <div class="flex items-center gap-2">
+                    <label for="wm-date-input" class="text-xs font-semibold text-space-slate">Datum:</label>
+                    <input type="date" id="wm-date-input" value="${escapeHTML(walkDate)}" class="touch-input min-h-[42px] py-1.5 px-3 font-mono text-sm font-semibold" />
+                  </div>
+                </div>
+
+                <!-- Status Buttons -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  ${Object.values(VISIT_STATUS).map(st => {
+                    const active = walkStatus === st.key;
+                    let cls = 'border-space-border bg-white text-space-graphite hover:bg-space-panel';
+                    if (active) {
+                      if (st.key === 'BROAD_CONSENT') cls = 'border-zkimed-green bg-zkimed-green text-white';
+                      else if (st.key === 'UNINFORMIERT') cls = 'border-zkimed-amber bg-zkimed-amber text-white';
+                      else cls = 'border-zkimed-bluegrey bg-zkimed-bluegrey text-white';
+                    }
+                    return `
+                      <button type="button" data-wm-status="${st.key}" class="wm-status-btn touch-btn min-h-[58px] px-3.5 py-2.5 border-2 font-bold text-sm sm:text-base text-center ${cls}">
+                        ${escapeHTML(st.label)}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+
+                <!-- Dynamic Counter -->
+                ${walkStatus === 'BROAD_CONSENT' ? `
+                  <div class="p-4 bg-zkimed-greenLight border-2 border-zkimed-green">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="font-display text-xs font-bold uppercase tracking-wider text-zkimed-green">Anzahl Broad Consents</span>
+                      <div class="flex gap-1.5">
+                        <button type="button" data-wm-add="1" class="wm-quick-add touch-btn min-h-[38px] px-2.5 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+1</button>
+                        <button type="button" data-wm-add="2" class="wm-quick-add touch-btn min-h-[38px] px-2.5 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+2</button>
+                        <button type="button" data-wm-add="5" class="wm-quick-add touch-btn min-h-[38px] px-2.5 py-1 bg-white border border-zkimed-green text-zkimed-green font-mono text-xs font-bold">+5</button>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <button type="button" id="wm-dec-btn" class="touch-btn w-16 h-16 bg-white border-2 border-zkimed-green text-zkimed-green font-mono text-3xl font-bold flex items-center justify-center">−</button>
+                      <input type="number" id="wm-count-input" min="0" inputmode="numeric" value="${walkCount}" class="touch-input flex-1 h-16 text-center font-mono text-3xl font-bold border-2 border-zkimed-green" />
+                      <button type="button" id="wm-inc-btn" class="touch-btn w-16 h-16 bg-zkimed-green text-white font-mono text-3xl font-bold flex items-center justify-center">+</button>
+                    </div>
+                  </div>
+                ` : ''}
+
+                <!-- Quick Note -->
+                <div>
+                  <input type="text" id="wm-note-input" value="${escapeHTML(walkNote)}" placeholder="Optionale Rundgangsnotiz..." class="touch-input w-full mb-2" />
+                  <div class="flex flex-wrap gap-1.5">
+                    ${state.settings.quickNotes.map(tpl => `
+                      <button type="button" data-wm-chip="${escapeHTML(tpl)}" class="wm-note-chip touch-btn min-h-[38px] px-2.5 py-1 bg-space-panel hover:bg-space-metal border border-space-borderLight text-xs text-space-graphite text-left">
+                        + ${escapeHTML(tpl)}
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Walk Mode Primary Actions -->
+                <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                  <button type="button" id="wm-save-next-btn" class="touch-btn min-h-[58px] flex-1 px-5 py-3 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2 shadow-sm">
+                    <span>SPEICHERN &amp; NÄCHSTE STATION (${escapeHTML(nextWard.stationNumber)}) →</span>
+                  </button>
+                  <button type="button" id="wm-skip-btn" class="touch-btn min-h-[58px] px-5 py-3 bg-white hover:bg-space-panel border border-space-border text-space-graphite font-display font-bold uppercase tracking-wider text-xs sm:text-sm">
+                    Überspringen →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    /* --------------------------------------------------------------------------
+       VIEW 5: RUNDGÄNGE (GLOBAL VISIT LOG GROUPED BY DATE)
+       -------------------------------------------------------------------------- */
+    function renderRundgaengeView() {
+      const wardMap = Object.fromEntries(state.wards.map(w => [w.id, w]));
+      const q = state.ui.logSearch.trim().toLowerCase();
+
+      let filtered = [...state.visits];
+      if (state.ui.logDateFilter) {
+        filtered = filtered.filter(v => v.date === state.ui.logDateFilter);
+      }
+      if (state.ui.logStationFilter !== 'ALL') {
+        filtered = filtered.filter(v => v.wardId === state.ui.logStationFilter);
+      }
+      if (state.ui.logStatusFilter !== 'ALL') {
+        filtered = filtered.filter(v => v.status === state.ui.logStatusFilter);
+      }
+      if (q) {
+        filtered = filtered.filter(v => {
+          const w = wardMap[v.wardId];
+          return (
+            (v.note && v.note.toLowerCase().includes(q)) ||
+            (w && w.stationNumber.toLowerCase().includes(q)) ||
+            (w && w.wardName && w.wardName.toLowerCase().includes(q))
+          );
+        });
+      }
+
+      filtered.sort((a, b) => {
+        if (b.date !== a.date) return b.date.localeCompare(a.date);
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+
+      // Group by date
+      const groupsMap = new Map();
+      filtered.forEach(v => {
+        if (!groupsMap.has(v.date)) groupsMap.set(v.date, []);
+        groupsMap.get(v.date).push(v);
+      });
+
+      const sortedWards = getSortedWardsList();
+
+      return `
+        <div class="space-y-4">
+          <section class="sf-module">
+            <div class="sf-module-header justify-between">
+              <span class="sf-label">GESAMTPROTOKOLL RUNDGÄNGE · SURVEY LOG (${filtered.length})</span>
+              ${(state.ui.logDateFilter || state.ui.logStationFilter !== 'ALL' || state.ui.logStatusFilter !== 'ALL' || q) ? `
+                <button type="button" id="log-reset-filters" class="text-xs font-display font-bold uppercase text-zkimed-red hover:underline">
+                  Filter zurücksetzen
+                </button>
+              ` : ''}
+            </div>
+
+            <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div>
+                <label class="block text-[11px] font-display font-bold uppercase text-space-teal mb-1">Datum filtern</label>
+                <input type="date" id="log-date-input" value="${escapeHTML(state.ui.logDateFilter)}" class="touch-input w-full font-mono text-sm" />
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-display font-bold uppercase text-space-teal mb-1">Station filtern</label>
+                <select id="log-station-select" class="touch-input w-full text-sm">
+                  <option value="ALL">Alle Stationen</option>
+                  ${sortedWards.map(w => `
+                    <option value="${w.id}" ${state.ui.logStationFilter === w.id ? 'selected' : ''}>${escapeHTML(w.stationNumber)} ${w.wardName ? `(${escapeHTML(w.wardName)})` : ''}</option>
+                  `).join('')}
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-display font-bold uppercase text-space-teal mb-1">Status filtern</label>
+                <select id="log-status-select" class="touch-input w-full text-sm">
+                  <option value="ALL">Alle Status</option>
+                  ${Object.values(VISIT_STATUS).map(st => `
+                    <option value="${st.key}" ${state.ui.logStatusFilter === st.key ? 'selected' : ''}>${escapeHTML(st.label)}</option>
+                  `).join('')}
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] font-display font-bold uppercase text-space-teal mb-1">Suche in Notizen / Station</label>
+                <input type="search" id="log-search-input" value="${escapeHTML(state.ui.logSearch)}" placeholder="Suchbegriff..." class="touch-input w-full text-sm" />
+              </div>
+            </div>
+          </section>
+
+          ${groupsMap.size === 0 ? `
+            <div class="sf-module p-6">
+              <div class="sf-stripes p-8 text-center">
+                <div class="font-mono text-sm font-bold uppercase text-space-slate">KEINE RUNDGANG-EINTRÄGE GEFUNDEN</div>
+                <p class="text-sm text-space-slate mt-1">Für die gewählten Filter liegen keine Einträge vor.</p>
+              </div>
+            </div>
+          ` : Array.from(groupsMap.entries()).map(([dateISO, items]) => {
+            const dayConsents = items.reduce((s, v) => s + (v.status === 'BROAD_CONSENT' ? (Number(v.consentCount) || 0) : 0), 0);
+            return `
+              <section class="sf-module">
+                <div class="sf-module-header justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <span class="font-mono text-sm font-bold text-space-graphite">${formatDateDE(dateISO)}</span>
+                    ${dateISO === getTodayISO() ? `<span class="px-2 py-0.5 bg-zkimed-red text-white font-mono text-[10px] font-bold">HEUTE</span>` : ''}
+                  </div>
+                  <div class="flex items-center gap-3 font-mono text-xs">
+                    <span class="text-space-slate">${items.length} Rundgänge</span>
+                    <span class="font-bold text-zkimed-green">+${dayConsents} Consents</span>
+                  </div>
+                </div>
+
+                <div class="divide-y divide-space-borderLight">
+                  ${items.map(v => {
+                    const w = wardMap[v.wardId];
+                    return `
+                      <div class="p-3.5 sm:px-5 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:bg-space-panel/60">
+                        <div class="space-y-1 flex-1 min-w-0">
+                          <div class="flex flex-wrap items-center gap-2.5">
+                            <button type="button" data-open-ward="${v.wardId}" class="log-ward-link font-display text-base font-bold text-space-graphite hover:text-zkimed-red underline">
+                              ${escapeHTML(w ? w.stationNumber : 'Unbekannte Station')}
+                            </button>
+                            ${w && w.wardName ? `<span class="text-xs text-space-slate">${escapeHTML(w.wardName)}</span>` : ''}
+                            ${renderStatusBadge(v.status, true)}
+                            ${v.status === 'BROAD_CONSENT' ? `
+                              <span class="font-mono text-xs font-bold px-2 py-0.5 bg-zkimed-green text-white">
+                                ${v.consentCount} Consent${v.consentCount === 1 ? '' : 's'}
+                              </span>
+                            ` : ''}
+                          </div>
+                          ${v.note ? `<p class="text-xs sm:text-sm text-space-slate">${escapeHTML(v.note)}</p>` : ''}
+                        </div>
+
+                        <div class="flex items-center gap-2 shrink-0">
+                          <button type="button" data-edit-visit="${v.id}" class="edit-visit-btn touch-btn px-3 py-2 border border-space-border bg-white hover:bg-space-panel text-xs font-semibold flex items-center gap-1">
+                            ${ICONS.edit}
+                            <span>Bearbeiten</span>
+                          </button>
+                          <button type="button" data-delete-visit="${v.id}" class="delete-visit-btn touch-btn px-3 py-2 border border-zkimed-red/40 bg-zkimed-redLight hover:bg-zkimed-red hover:text-white text-zkimed-red text-xs font-semibold flex items-center gap-1">
+                            ${ICONS.trash}
+                            <span>Löschen</span>
+                          </button>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </section>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    /* --------------------------------------------------------------------------
+       VIEW 6: DATA / EXPORT (.XLSX & JSON BACKUP)
+       -------------------------------------------------------------------------- */
+    function renderExportView() {
+      const stats = getGlobalStats();
+      const selectedDate = state.ui.exportDate || getTodayISO();
+
+      // All unique dates with recorded visits, newest first
+      const uniqueDates = Array.from(new Set(state.visits.map(v => v.date))).sort((a, b) => b.localeCompare(a));
+      const dayVisits = state.visits
+        .filter(v => v.date === selectedDate)
+        .sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      const wardMap = Object.fromEntries(state.wards.map(w => [w.id, w]));
+
+      return `
+        <div class="space-y-5">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <!-- OPTION A: COMPLETE EXCEL EXPORT -->
+            <section class="sf-module flex flex-col justify-between">
+              <div>
+                <div class="sf-module-header accent-green">
+                  <span class="sf-label">OPTION A · GESAMTDATEN EXPORTIEREN (.XLSX)</span>
+                </div>
+                <div class="p-5 space-y-4">
+                  <p class="text-sm text-space-graphite leading-relaxed">
+                    Exportiert den gesamten Datenbestand als strukturierte Excel-Arbeitsmappe (<code>.xlsx</code>) mit zwei Tabellenblättern:
+                  </p>
+                  <div class="space-y-2 text-xs">
+                    <div class="p-3 bg-space-panel border border-space-borderLight">
+                      <div class="font-display font-bold uppercase text-space-graphite">Blatt 1: Stationsübersicht (${stats.totalWards} Zeilen)</div>
+                      <div class="text-space-slate mt-0.5">Stationsnummer, Name, Adresse, Ansprechpartner, Rolle, Kontakt, Postfach-Ort, Notizen, Rundgänge, Consents Gesamt, Letzter Rundgang &amp; Status.</div>
+                    </div>
+                    <div class="p-3 bg-space-panel border border-space-borderLight">
+                      <div class="font-display font-bold uppercase text-space-graphite">Blatt 2: Rundgänge (${stats.totalVisits} Zeilen)</div>
+                      <div class="text-space-slate mt-0.5">Chronologische Einzelauflistung aller dokumentierten Rundgänge mit Datum, Status, Anzahl Broad Consents und Rundgangsnotiz.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-5 pt-0">
+                <button type="button" id="exp-complete-btn" class="touch-btn min-h-[56px] w-full px-5 py-3 bg-zkimed-green hover:opacity-95 text-white font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2 shadow-sm">
+                  ${ICONS.export}
+                  <span>Gesamtdaten exportieren (.xlsx)</span>
+                </button>
+              </div>
+            </section>
+
+            <!-- OPTION B: SINGLE DAY / VISIT EXPORT -->
+            <section class="sf-module flex flex-col justify-between">
+              <div>
+                <div class="sf-module-header accent-red">
+                  <span class="sf-label">OPTION B · TAGESRUNDGANG EXPORTIEREN (.XLSX)</span>
+                </div>
+                <div class="p-5 space-y-4">
+                  <div>
+                    <label for="exp-date-input" class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                      Datum für Tagesexport auswählen
+                    </label>
+                    <input type="date" id="exp-date-input" value="${escapeHTML(selectedDate)}" class="touch-input w-full font-mono text-base font-semibold" />
+                  </div>
+
+                  ${uniqueDates.length > 0 ? `
+                    <div>
+                      <div class="text-[11px] font-display font-bold uppercase tracking-wider text-space-slate mb-1.5">Schnellauswahl erfasster Tage:</div>
+                      <div class="flex flex-wrap gap-1.5">
+                        ${uniqueDates.slice(0, 8).map(d => {
+                          const count = state.visits.filter(v => v.date === d).length;
+                          const isSel = d === selectedDate;
+                          return `
+                            <button type="button" data-exp-quick-date="${d}" class="exp-quick-date touch-btn min-h-[38px] px-3 py-1 border font-mono text-xs font-bold ${isSel ? 'bg-space-graphite text-white border-space-graphite' : 'bg-white text-space-graphite border-space-border hover:bg-space-panel'}">
+                              ${formatDateDE(d)} (${count})
+                            </button>
+                          `;
+                        }).join('')}
+                      </div>
+                    </div>
+                  ` : ''}
+
+                  <div class="p-3 bg-space-panel border border-space-borderLight flex items-center justify-between text-xs sm:text-sm">
+                    <span class="font-semibold text-space-graphite">Vorschau für ${formatDateDE(selectedDate)}:</span>
+                    <span class="font-mono font-bold text-zkimed-red">${dayVisits.length} Rundgänge</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-5 pt-0">
+                <button type="button" id="exp-day-btn" ${dayVisits.length === 0 ? 'disabled' : ''} class="touch-btn min-h-[56px] w-full px-5 py-3 font-display font-bold uppercase tracking-wider text-sm flex items-center justify-center gap-2 ${dayVisits.length > 0 ? 'bg-zkimed-red hover:bg-zkimed-redDark text-white shadow-sm' : 'bg-space-metal text-space-slate border border-space-border cursor-not-allowed'}">
+                  ${ICONS.export}
+                  <span>Tagesrundgang exportieren (.xlsx)</span>
+                </button>
+              </div>
+            </section>
+          </div>
+
+          <!-- LIVE PREVIEW TABLE FOR SELECTED DAY -->
+          <section class="sf-module">
+            <div class="sf-module-header justify-between">
+              <span class="sf-label">DATENVORSCHAU · TAGESRUNDGANG (${formatDateDE(selectedDate)})</span>
+              <span class="font-mono text-xs text-space-slate">${dayVisits.length} Einträge</span>
+            </div>
+            ${dayVisits.length === 0 ? `
+              <div class="p-6">
+                <div class="sf-stripes p-6 text-center font-mono text-xs uppercase text-space-slate">
+                  KEINE RUNDGÄNGE AM ${formatDateDE(selectedDate)} DOKUMENTIERT
+                </div>
+              </div>
+            ` : `
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                  <thead>
+                    <tr class="bg-space-panel border-b border-space-border font-display text-xs uppercase tracking-wider text-space-teal">
+                      <th class="p-3">Station</th>
+                      <th class="p-3">Standort</th>
+                      <th class="p-3">Status</th>
+                      <th class="p-3">Consents</th>
+                      <th class="p-3">Notiz</th>
+                      <th class="p-3">Ansprechpartner</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-space-borderLight">
+                    ${dayVisits.map(v => {
+                      const w = wardMap[v.wardId];
+                      return `
+                        <tr class="hover:bg-space-panel/50">
+                          <td class="p-3 font-display font-bold text-space-graphite whitespace-nowrap">${escapeHTML(w ? w.stationNumber : '—')}</td>
+                          <td class="p-3 text-space-slate">${escapeHTML(w ? w.location : '—')}</td>
+                          <td class="p-3 whitespace-nowrap">${renderStatusBadge(v.status, true)}</td>
+                          <td class="p-3 font-mono font-bold">${v.status === 'BROAD_CONSENT' ? v.consentCount : 0}</td>
+                          <td class="p-3 text-space-slate">${escapeHTML(v.note || '—')}</td>
+                          <td class="p-3 text-space-slate whitespace-nowrap">${escapeHTML(w ? (w.contactName || '—') : '—')}</td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            `}
+          </section>
+
+          <!-- JSON BACKUP & RESTORE -->
+          <section class="sf-module">
+            <div class="sf-module-header">
+              <span class="sf-label">SYSTEM-SICHERUNG &amp; WIEDERHERSTELLUNG (.JSON)</span>
+            </div>
+            <div class="p-5 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+              <p class="text-xs sm:text-sm text-space-slate max-w-2xl">
+                Erstellen Sie eine vollständige Offline-Sicherung Ihrer Stationen, Rundgänge und Einstellungen oder stellen Sie einen gesicherten Stand wieder her.
+              </p>
+              <div class="flex flex-wrap gap-3 shrink-0">
+                <button type="button" id="exp-json-btn" class="touch-btn px-4 py-2.5 border border-space-border bg-white hover:bg-space-panel font-display text-xs font-bold uppercase tracking-wider text-space-graphite">
+                  JSON-Backup speichern
+                </button>
+                <label class="touch-btn px-4 py-2.5 border border-space-graphite bg-space-graphite hover:bg-space-teal text-white font-display text-xs font-bold uppercase tracking-wider flex items-center cursor-pointer">
+                  <span>JSON-Backup laden</span>
+                  <input type="file" id="imp-json-input" accept=".json,application/json" class="hidden" />
+                </label>
+              </div>
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    /* --------------------------------------------------------------------------
+       VIEW 7: SETTINGS
+       -------------------------------------------------------------------------- */
+    function renderSettingsView() {
+      return `
+        <div class="space-y-5">
+          <!-- Terminal Configuration -->
+          <section class="sf-module">
+            <div class="sf-module-header">
+              <span class="sf-label">TERMINAL-KONFIGURATION · MISSION PARAMETERS</span>
+            </div>
+            <form id="settings-form" class="p-5 space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                    Einrichtung / Klinik-Kennung
+                  </label>
+                  <input type="text" id="set-facility" value="${escapeHTML(state.settings.facilityName)}" class="touch-input w-full" />
+                </div>
+                <div>
+                  <label class="block font-display text-xs font-bold uppercase tracking-wider text-space-teal mb-1.5">
+                    Aktive Studie / Survey-Bezeichnung
+                  </label>
+                  <input type="text" id="set-survey" value="${escapeHTML(state.settings.surveyTitle)}" class="touch-input w-full" />
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <button type="submit" class="touch-btn px-6 py-3 bg-space-graphite hover:bg-space-teal text-white font-display text-xs font-bold uppercase tracking-wider">
+                  Konfiguration speichern
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Quick Note Presets -->
+          <section class="sf-module">
+            <div class="sf-module-header">
+              <span class="sf-label">SCHNELLNOTIZ-VORLAGEN · QUICK ENTRY CHIPS</span>
+            </div>
+            <div class="p-5 space-y-4">
+              <div class="flex flex-col sm:flex-row gap-2.5">
+                <input type="text" id="set-new-chip" placeholder="Neue Schnellnotiz-Vorlage eingeben..." class="touch-input flex-1" />
+                <button type="button" id="set-add-chip-btn" class="touch-btn px-5 py-3 bg-zkimed-red hover:bg-zkimed-redDark text-white font-display text-xs font-bold uppercase tracking-wider shrink-0">
+                  + Vorlage hinzufügen
+                </button>
+              </div>
+
+              <div class="divide-y divide-space-borderLight border border-space-borderLight">
+                ${state.settings.quickNotes.map((note, idx) => `
+                  <div class="p-3 bg-white flex items-center justify-between gap-3">
+                    <span class="text-sm text-space-graphite">${escapeHTML(note)}</span>
+                    <button type="button" data-del-chip="${idx}" class="del-chip-btn touch-btn min-h-[38px] px-3 py-1 border border-space-border bg-space-panel hover:bg-zkimed-red hover:text-white hover:border-zkimed-red text-xs font-semibold">
+                      Entfernen
+                    </button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </section>
+
+          <!-- Data Reset / Demo Data -->
+          <section class="sf-module">
+            <div class="sf-module-header accent-red">
+              <span class="sf-label">DATENVERWALTUNG &amp; SYSTEM-RESET</span>
+            </div>
+            <div class="p-5 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-4">
+              <div class="text-sm text-space-slate">
+                Alle Änderungen werden automatisch lokal im Browser gespeichert (Offline-fähig).
+              </div>
+              <div class="flex flex-wrap gap-3">
+                <button type="button" id="set-reload-demo" class="touch-btn px-4 py-2.5 border border-space-border bg-white hover:bg-space-panel font-display text-xs font-bold uppercase tracking-wider text-space-graphite">
+                  Demodaten wiederherstellen
+                </button>
+                <button type="button" id="set-clear-all" class="touch-btn px-4 py-2.5 border border-zkimed-red bg-zkimed-redLight hover:bg-zkimed-red hover:text-white font-display text-xs font-bold uppercase tracking-wider text-zkimed-red">
+                  Alle Daten löschen
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       10. MAIN RENDER ORCHESTRATOR & EVENT BINDINGS
+       ========================================================================== */
+    function renderApp() {
+      const app = document.getElementById('app');
+      if (!app) return;
+
+      let mainContent = '';
+      switch (state.ui.activeTab) {
+        case 'MISSION_CONTROL':
+          mainContent = renderMissionControl();
+          break;
+        case 'STATIONS':
+          mainContent = renderStationsView();
+          break;
+        case 'WARD_DETAIL':
+          mainContent = renderWardDetailView();
+          break;
+        case 'WALK_MODE':
+          mainContent = renderWalkMode();
+          break;
+        case 'RUNDGAENGE':
+          mainContent = renderRundgaengeView();
+          break;
+        case 'EXPORT':
+          mainContent = renderExportView();
+          break;
+        case 'SETTINGS':
+          mainContent = renderSettingsView();
+          break;
+        default:
+          mainContent = renderMissionControl();
+      }
+
+      app.innerHTML = `
+        ${renderHeader()}
+        ${state.ui.activeTab !== 'WALK_MODE' ? renderNavigation() : ''}
+        <main class="flex-1">
+          ${mainContent}
+        </main>
+      `;
+
+      bindEvents();
+    }
+
+    function bindEvents() {
+      // Header Walk Mode launch/exit
+      const launchWalkBtn = document.getElementById('btn-launch-walk-header');
+      if (launchWalkBtn) launchWalkBtn.addEventListener('click', () => startWalkMode());
+
+      const exitWalkHeaderBtn = document.getElementById('btn-exit-walk-header');
+      if (exitWalkHeaderBtn) {
+        exitWalkHeaderBtn.addEventListener('click', () => {
+          state.ui.activeTab = 'MISSION_CONTROL';
+          renderApp();
+        });
+      }
+
+      // Navigation Tabs
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.ui.activeTab = btn.getAttribute('data-nav');
+          renderApp();
+        });
+      });
+
+      // MISSION CONTROL bindings
+      const mcWalk = document.getElementById('mc-start-walk');
+      if (mcWalk) mcWalk.addEventListener('click', () => startWalkMode());
+
+      const mcAddWard = document.getElementById('mc-add-ward');
+      if (mcAddWard) mcAddWard.addEventListener('click', openAddWardModal);
+
+      const mcStations = document.getElementById('mc-open-stations');
+      if (mcStations) mcStations.addEventListener('click', () => {
+        state.ui.activeTab = 'STATIONS';
+        renderApp();
+      });
+
+      const mcExport = document.getElementById('mc-open-export');
+      if (mcExport) mcExport.addEventListener('click', () => {
+        state.ui.activeTab = 'EXPORT';
+        renderApp();
+      });
+
+      const mcAllLogs = document.getElementById('mc-view-all-logs');
+      if (mcAllLogs) mcAllLogs.addEventListener('click', () => {
+        state.ui.activeTab = 'RUNDGAENGE';
+        renderApp();
+      });
+
+      document.querySelectorAll('.mc-activity-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const wId = row.getAttribute('data-open-ward');
+          if (wId) openWardDetail(wId, 'HISTORY');
+        });
+      });
+
+      // STATIONS DIRECTORY bindings
+      const stAddBtn = document.getElementById('st-add-ward-btn');
+      if (stAddBtn) stAddBtn.addEventListener('click', openAddWardModal);
+
+      const stSearch = document.getElementById('st-search-input');
+      if (stSearch) {
+        stSearch.addEventListener('input', (e) => {
+          const pos = e.target.selectionStart;
+          state.ui.stationSearch = e.target.value;
+          renderApp();
+          const newInput = document.getElementById('st-search-input');
+          if (newInput) {
+            newInput.focus();
+            newInput.setSelectionRange(pos, pos);
+          }
+        });
+      }
+
+      const stSort = document.getElementById('st-sort-select');
+      if (stSort) {
+        stSort.addEventListener('change', (e) => {
+          const val = e.target.value;
+          if (val === 'NUMBER_ASC') { state.ui.stationSortBy = 'NUMBER'; state.ui.stationSortDir = 'ASC'; }
+          else if (val === 'NUMBER_DESC') { state.ui.stationSortBy = 'NUMBER'; state.ui.stationSortDir = 'DESC'; }
+          else if (val === 'LAST_VISIT_DESC') { state.ui.stationSortBy = 'LAST_VISIT'; state.ui.stationSortDir = 'DESC'; }
+          else if (val === 'LAST_VISIT_ASC') { state.ui.stationSortBy = 'LAST_VISIT'; state.ui.stationSortDir = 'ASC'; }
+          renderApp();
+        });
+      }
+
+      document.querySelectorAll('.st-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.ui.stationFilter = btn.getAttribute('data-st-filter');
+          renderApp();
+        });
+      });
+
+      document.querySelectorAll('.ward-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.quick-visit-btn')) return;
+          openWardDetail(card.getAttribute('data-ward-card'), 'OVERVIEW');
+        });
+      });
+
+      document.querySelectorAll('.quick-visit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openWardDetail(btn.getAttribute('data-quick-visit'), 'QUICK_ENTRY');
+        });
+      });
+
+      // WARD DETAIL bindings
+      const wdBack = document.getElementById('wd-back-btn');
+      if (wdBack) wdBack.addEventListener('click', () => {
+        state.ui.activeTab = 'STATIONS';
+        renderApp();
+      });
+
+      const wdPrev = document.getElementById('wd-prev-btn');
+      if (wdPrev) {
+        wdPrev.addEventListener('click', () => {
+          const sorted = getSortedWardsList();
+          const idx = sorted.findIndex(w => w.id === state.ui.selectedWardId);
+          if (idx > 0) openWardDetail(sorted[idx - 1].id, state.ui.wardDetailTab);
+        });
+      }
+
+      const wdNext = document.getElementById('wd-next-btn');
+      if (wdNext) {
+        wdNext.addEventListener('click', () => {
+          const sorted = getSortedWardsList();
+          const idx = sorted.findIndex(w => w.id === state.ui.selectedWardId);
+          if (idx >= 0 && idx < sorted.length - 1) openWardDetail(sorted[idx + 1].id, state.ui.wardDetailTab);
+        });
+      }
+
+      const wdDelWard = document.getElementById('wd-delete-ward-btn');
+      if (wdDelWard) wdDelWard.addEventListener('click', () => deleteWardWithConfirm(state.ui.selectedWardId));
+
+      document.querySelectorAll('.wd-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.getAttribute('data-wd-tab');
+          openWardDetail(state.ui.selectedWardId, tab);
+        });
+      });
+
+      // Ward Overview Edit Form
+      const wdEditForm = document.getElementById('wd-edit-form');
+      if (wdEditForm) {
+        wdEditForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const ward = state.wards.find(w => w.id === state.ui.selectedWardId);
+          if (!ward) return;
+          const fd = new FormData(wdEditForm);
+          const newNum = fd.get('stationNumber').trim();
+          const newLoc = fd.get('location').trim();
+          const newMail = fd.get('mailboxLocation').trim();
+
+          const errEl = document.getElementById('wd-edit-error');
+          if (!newNum || !newLoc || !newMail) {
+            errEl.textContent = 'Stationsnummer, Standort und Postfach-Ort dürfen nicht leer sein.';
+            errEl.classList.remove('hidden');
+            return;
+          }
+
+          const dup = state.wards.some(w => w.id !== ward.id && w.stationNumber.trim().toLowerCase() === newNum.toLowerCase());
+          if (dup) {
+            errEl.textContent = `Stationsnummer "${newNum}" wird bereits von einer anderen Station verwendet.`;
+            errEl.classList.remove('hidden');
+            return;
+          }
+
+          ward.stationNumber = newNum;
+          ward.wardName = fd.get('wardName').trim();
+          ward.location = newLoc;
+          ward.mailboxLocation = newMail;
+          ward.contactName = fd.get('contactName').trim();
+          ward.contactRole = fd.get('contactRole').trim();
+          ward.contactInfo = fd.get('contactInfo').trim();
+          ward.contactNotes = fd.get('contactNotes').trim();
+          ward.notes = fd.get('notes').trim();
+
+          saveState();
+          showToast('Stationsdaten gespeichert.', 'success');
+          renderApp();
+        });
+      }
+
+      const wdGotoQe = document.getElementById('wd-goto-qe-btn');
+      if (wdGotoQe) wdGotoQe.addEventListener('click', () => openWardDetail(state.ui.selectedWardId, 'QUICK_ENTRY'));
+
+      const wdHistAdd = document.getElementById('wd-hist-add-btn');
+      if (wdHistAdd) wdHistAdd.addEventListener('click', () => openWardDetail(state.ui.selectedWardId, 'QUICK_ENTRY'));
+
+      const wdHistEmptyAdd = document.getElementById('wd-hist-empty-add');
+      if (wdHistEmptyAdd) wdHistEmptyAdd.addEventListener('click', () => openWardDetail(state.ui.selectedWardId, 'QUICK_ENTRY'));
+
+      // Ward Quick Entry bindings
+      const qeDateInput = document.getElementById('qe-date-input');
+      if (qeDateInput) qeDateInput.addEventListener('change', (e) => { state.ui.qeDate = e.target.value; });
+
+      const qeTodayBtn = document.getElementById('qe-date-today');
+      if (qeTodayBtn) qeTodayBtn.addEventListener('click', () => { state.ui.qeDate = getTodayISO(); renderApp(); });
+
+      const qeYesterdayBtn = document.getElementById('qe-date-yesterday');
+      if (qeYesterdayBtn) qeYesterdayBtn.addEventListener('click', () => { state.ui.qeDate = getOffsetDateISO(-1); renderApp(); });
+
+      document.querySelectorAll('.qe-status-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.ui.qeStatus = btn.getAttribute('data-qe-status');
+          if (state.ui.qeStatus === 'BROAD_CONSENT' && state.ui.qeCount === 0) state.ui.qeCount = 1;
+          renderApp();
+        });
+      });
+
+      const qeDec = document.getElementById('qe-dec-btn');
+      if (qeDec) qeDec.addEventListener('click', () => { state.ui.qeCount = Math.max(0, state.ui.qeCount - 1); renderApp(); });
+
+      const qeInc = document.getElementById('qe-inc-btn');
+      if (qeInc) qeInc.addEventListener('click', () => { state.ui.qeCount += 1; renderApp(); });
+
+      const qeCountInput = document.getElementById('qe-count-input');
+      if (qeCountInput) {
+        qeCountInput.addEventListener('input', (e) => {
+          state.ui.qeCount = Math.max(0, parseInt(e.target.value, 10) || 0);
+        });
+      }
+
+      document.querySelectorAll('.qe-quick-add').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.ui.qeCount += parseInt(btn.getAttribute('data-qe-add'), 10) || 0;
+          renderApp();
+        });
+      });
+
+      const qeNoteInput = document.getElementById('qe-note-input');
+      if (qeNoteInput) {
+        qeNoteInput.addEventListener('input', (e) => { state.ui.qeNote = e.target.value; });
+      }
+
+      document.querySelectorAll('.qe-note-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.getAttribute('data-qe-chip');
+          state.ui.qeNote = state.ui.qeNote ? `${state.ui.qeNote} ${text}` : text;
+          renderApp();
+        });
+      });
+
+      const qeSaveBtn = document.getElementById('qe-save-btn');
+      if (qeSaveBtn) {
+        qeSaveBtn.addEventListener('click', () => {
+          const ward = state.wards.find(w => w.id === state.ui.selectedWardId);
+          if (!ward) return;
+          addVisitRecord({
+            wardId: ward.id,
+            date: state.ui.qeDate || getTodayISO(),
+            status: state.ui.qeStatus,
+            consentCount: state.ui.qeCount,
+            note: state.ui.qeNote
+          });
+          showToast(`Rundgang für ${ward.stationNumber} gespeichert.`, 'success');
+          openWardDetail(ward.id, 'HISTORY');
+        });
+      }
+
+      const qeSaveNextBtn = document.getElementById('qe-save-next-btn');
+      if (qeSaveNextBtn) {
+        qeSaveNextBtn.addEventListener('click', () => {
+          const sorted = getSortedWardsList();
+          const idx = sorted.findIndex(w => w.id === state.ui.selectedWardId);
+          const ward = sorted[idx];
+          if (!ward) return;
+          addVisitRecord({
+            wardId: ward.id,
+            date: state.ui.qeDate || getTodayISO(),
+            status: state.ui.qeStatus,
+            consentCount: state.ui.qeCount,
+            note: state.ui.qeNote
+          });
+          const nextWard = sorted[idx + 1];
+          if (nextWard) {
+            showToast(`${ward.stationNumber} gespeichert → Weiter zu ${nextWard.stationNumber}`, 'success');
+            openWardDetail(nextWard.id, 'QUICK_ENTRY');
+          } else {
+            showToast(`${ward.stationNumber} gespeichert.`, 'success');
+            openWardDetail(ward.id, 'HISTORY');
+          }
+        });
+      }
+
+      // WALK MODE bindings
+      const wmExit = document.getElementById('wm-exit-btn');
+      if (wmExit) wmExit.addEventListener('click', () => { state.ui.activeTab = 'MISSION_CONTROL'; renderApp(); });
+
+      const wmAddWard = document.getElementById('wm-add-ward');
+      if (wmAddWard) wmAddWard.addEventListener('click', openAddWardModal);
+
+      document.querySelectorAll('.wm-pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.ui.walkWardId = btn.getAttribute('data-wm-select');
+          state.ui.walkStatus = 'BROAD_CONSENT';
+          state.ui.walkCount = 1;
+          state.ui.walkNote = '';
+          renderApp();
+        });
+      });
+
+      const wmOpenDetail = document.getElementById('wm-open-detail-btn');
+      if (wmOpenDetail) {
+        wmOpenDetail.addEventListener('click', () => openWardDetail(state.ui.walkWardId, 'OVERVIEW'));
+      }
+
+      const wmDateInput = document.getElementById('wm-date-input');
+      if (wmDateInput) wmDateInput.addEventListener('change', (e) => { state.ui.walkDate = e.target.value; });
+
+      document.querySelectorAll('.wm-status-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.ui.walkStatus = btn.getAttribute('data-wm-status');
+          if (state.ui.walkStatus === 'BROAD_CONSENT' && state.ui.walkCount === 0) state.ui.walkCount = 1;
+          renderApp();
+        });
+      });
+
+      const wmDec = document.getElementById('wm-dec-btn');
+      if (wmDec) wmDec.addEventListener('click', () => { state.ui.walkCount = Math.max(0, state.ui.walkCount - 1); renderApp(); });
+
+      const wmInc = document.getElementById('wm-inc-btn');
+      if (wmInc) wmInc.addEventListener('click', () => { state.ui.walkCount += 1; renderApp(); });
+
+      const wmCountInput = document.getElementById('wm-count-input');
+      if (wmCountInput) {
+        wmCountInput.addEventListener('input', (e) => {
+          state.ui.walkCount = Math.max(0, parseInt(e.target.value, 10) || 0);
+        });
+      }
+
+      document.querySelectorAll('.wm-quick-add').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.ui.walkCount += parseInt(btn.getAttribute('data-wm-add'), 10) || 0;
+          renderApp();
+        });
+      });
+
+      const wmNoteInput = document.getElementById('wm-note-input');
+      if (wmNoteInput) {
+        wmNoteInput.addEventListener('input', (e) => { state.ui.walkNote = e.target.value; });
+      }
+
+      document.querySelectorAll('.wm-note-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.getAttribute('data-wm-chip');
+          state.ui.walkNote = state.ui.walkNote ? `${state.ui.walkNote} ${text}` : text;
+          renderApp();
+        });
+      });
+
+      const wmSaveNext = document.getElementById('wm-save-next-btn');
+      if (wmSaveNext) {
+        wmSaveNext.addEventListener('click', () => {
+          const sorted = getSortedWardsList();
+          const idx = sorted.findIndex(w => w.id === state.ui.walkWardId);
+          const ward = sorted[idx];
+          if (!ward) return;
+
+          addVisitRecord({
+            wardId: ward.id,
+            date: state.ui.walkDate || getTodayISO(),
+            status: state.ui.walkStatus,
+            consentCount: state.ui.walkCount,
+            note: state.ui.walkNote
+          });
+
+          const nextWard = sorted[(idx + 1) % sorted.length];
+          state.ui.walkWardId = nextWard.id;
+          state.ui.walkStatus = 'BROAD_CONSENT';
+          state.ui.walkCount = 1;
+          state.ui.walkNote = '';
+          showToast(`${ward.stationNumber} gespeichert → Nächste: ${nextWard.stationNumber}`, 'success');
+          renderApp();
+        });
+      }
+
+      const wmSkip = document.getElementById('wm-skip-btn');
+      if (wmSkip) {
+        wmSkip.addEventListener('click', () => {
+          const sorted = getSortedWardsList();
+          const idx = sorted.findIndex(w => w.id === state.ui.walkWardId);
+          const nextWard = sorted[(idx + 1) % sorted.length];
+          state.ui.walkWardId = nextWard.id;
+          state.ui.walkStatus = 'BROAD_CONSENT';
+          state.ui.walkCount = 1;
+          state.ui.walkNote = '';
+          renderApp();
+        });
+      }
+
+      // GLOBAL RUNDGÄNGE LOG bindings
+      const logReset = document.getElementById('log-reset-filters');
+      if (logReset) {
+        logReset.addEventListener('click', () => {
+          state.ui.logDateFilter = '';
+          state.ui.logStationFilter = 'ALL';
+          state.ui.logStatusFilter = 'ALL';
+          state.ui.logSearch = '';
+          renderApp();
+        });
+      }
+
+      const logDateIn = document.getElementById('log-date-input');
+      if (logDateIn) logDateIn.addEventListener('change', (e) => { state.ui.logDateFilter = e.target.value; renderApp(); });
+
+      const logStationSel = document.getElementById('log-station-select');
+      if (logStationSel) logStationSel.addEventListener('change', (e) => { state.ui.logStationFilter = e.target.value; renderApp(); });
+
+      const logStatusSel = document.getElementById('log-status-select');
+      if (logStatusSel) logStatusSel.addEventListener('change', (e) => { state.ui.logStatusFilter = e.target.value; renderApp(); });
+
+      const logSearchIn = document.getElementById('log-search-input');
+      if (logSearchIn) {
+        logSearchIn.addEventListener('input', (e) => {
+          const pos = e.target.selectionStart;
+          state.ui.logSearch = e.target.value;
+          renderApp();
+          const el = document.getElementById('log-search-input');
+          if (el) { el.focus(); el.setSelectionRange(pos, pos); }
+        });
+      }
+
+      document.querySelectorAll('.log-ward-link').forEach(btn => {
+        btn.addEventListener('click', () => openWardDetail(btn.getAttribute('data-open-ward'), 'OVERVIEW'));
+      });
+
+      // Shared Edit & Delete Visit Buttons (Ward History + Global Log)
+      document.querySelectorAll('.edit-visit-btn').forEach(btn => {
+        btn.addEventListener('click', () => openEditVisitModal(btn.getAttribute('data-edit-visit')));
+      });
+
+      document.querySelectorAll('.delete-visit-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteVisitWithUndo(btn.getAttribute('data-delete-visit')));
+      });
+
+      // DATA / EXPORT bindings
+      const expComplete = document.getElementById('exp-complete-btn');
+      if (expComplete) expComplete.addEventListener('click', exportCompleteXLSX);
+
+      const expDateIn = document.getElementById('exp-date-input');
+      if (expDateIn) expDateIn.addEventListener('change', (e) => { state.ui.exportDate = e.target.value; renderApp(); });
+
+      document.querySelectorAll('.exp-quick-date').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.ui.exportDate = btn.getAttribute('data-exp-quick-date');
+          renderApp();
+        });
+      });
+
+      const expDayBtn = document.getElementById('exp-day-btn');
+      if (expDayBtn) expDayBtn.addEventListener('click', () => exportDayXLSX(state.ui.exportDate));
+
+      const expJsonBtn = document.getElementById('exp-json-btn');
+      if (expJsonBtn) expJsonBtn.addEventListener('click', exportJSONBackup);
+
+      const impJsonInput = document.getElementById('imp-json-input');
+      if (impJsonInput) {
+        impJsonInput.addEventListener('change', (e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            try {
+              const parsed = JSON.parse(evt.target.result);
+              if (!Array.isArray(parsed.wards) || !Array.isArray(parsed.visits)) {
+                showToast('Ungültiges Backup-Dateiformat.', 'error');
+                return;
+              }
+              showConfirmModal({
+                title: 'BACKUP WIEDERHERSTELLEN',
+                message: `Möchten Sie ${parsed.wards.length} Stationen und ${parsed.visits.length} Rundgänge aus dem Backup laden? Aktuelle Daten werden dabei ersetzt.`,
+                confirmText: 'Backup wiederherstellen',
+                danger: false,
+                onConfirm: () => {
+                  state.wards = parsed.wards;
+                  state.visits = parsed.visits;
+                  if (parsed.settings) state.settings = { ...state.settings, ...parsed.settings };
+                  saveState();
+                  renderApp();
+                  showToast('Backup erfolgreich wiederhergestellt.', 'success');
+                }
+              });
+            } catch (err) {
+              showToast('Fehler beim Lesen der JSON-Datei.', 'error');
+            }
+          };
+          reader.readAsText(file);
+        });
+      }
+
+      // SETTINGS bindings
+      const settingsForm = document.getElementById('settings-form');
+      if (settingsForm) {
+        settingsForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          state.settings.facilityName = document.getElementById('set-facility').value.trim() || 'ZKIMED FORSCHUNGSKLINIKUM';
+          state.settings.surveyTitle = document.getElementById('set-survey').value.trim() || 'BROAD CONSENT SURVEY';
+          saveState();
+          renderApp();
+          showToast('Terminal-Konfiguration gespeichert.', 'success');
+        });
+      }
+
+      const addChipBtn = document.getElementById('set-add-chip-btn');
+      if (addChipBtn) {
+        addChipBtn.addEventListener('click', () => {
+          const input = document.getElementById('set-new-chip');
+          const val = input.value.trim();
+          if (!val) return;
+          state.settings.quickNotes.push(val);
+          saveState();
+          renderApp();
+          showToast('Schnellnotiz-Vorlage hinzugefügt.', 'success');
+        });
+      }
+
+      document.querySelectorAll('.del-chip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.getAttribute('data-del-chip'), 10);
+          state.settings.quickNotes.splice(idx, 1);
+          saveState();
+          renderApp();
+          showToast('Vorlage entfernt.', 'info');
+        });
+      });
+
+      const reloadDemoBtn = document.getElementById('set-reload-demo');
+      if (reloadDemoBtn) {
+        reloadDemoBtn.addEventListener('click', () => {
+          showConfirmModal({
+            title: 'DEMODATEN WIEDERHERSTELLEN',
+            message: 'Alle aktuellen Stationen und Rundgänge werden durch die 6 ZKIMED-Demostationen ersetzt. Fortfahren?',
+            confirmText: 'Demodaten laden',
+            danger: true,
+            onConfirm: () => {
+              const demo = createDemoData();
+              state.wards = demo.wards;
+              state.visits = demo.visits;
+              saveState();
+              state.ui.activeTab = 'MISSION_CONTROL';
+              renderApp();
+              showToast('Demodaten wurden geladen.', 'success');
+            }
+          });
+        });
+      }
+
+      const clearAllBtn = document.getElementById('set-clear-all');
+      if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', () => {
+          showConfirmModal({
+            title: 'ALLE DATEN LÖSCHEN',
+            message: 'Möchten Sie wirklich alle Stationen und Rundgänge unwiderruflich löschen, um mit einer leeren Datenbank zu starten?',
+            confirmText: 'Alles löschen',
+            danger: true,
+            onConfirm: () => {
+              state.wards = [];
+              state.visits = [];
+              saveState();
+              state.ui.activeTab = 'MISSION_CONTROL';
+              renderApp();
+              showToast('Alle Stations- und Rundgangdaten wurden gelöscht.', 'info');
+            }
+          });
+        });
+      }
+    }
+
+    // Boot terminal on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderApp();
+    });
+  </script>
+</body>
+</html>
